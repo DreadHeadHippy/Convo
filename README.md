@@ -4,7 +4,7 @@
 
 [![Tests](https://img.shields.io/badge/tests-17%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.11+-blue)](https://python.org)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Status](https://img.shields.io/badge/status-production%20ready-success)](examples/)
 
 Convo is a **fully functional programming language** that reads like natural English, making programming more accessible and intuitive. Instead of cryptic symbols and syntax, write code that anyone can understand.
@@ -184,7 +184,7 @@ We welcome contributions! Please feel free to:
 
 ## 📜 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+Apache License 2.0 - see [LICENSE](LICENSE) file for details.
 
 ## 🎉 Why Convo?
 
