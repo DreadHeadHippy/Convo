@@ -8,6 +8,12 @@ import os
 import json
 from typing import Any, List, Dict
 
+# Import Discord functions if available
+try:
+    from .modules.discord_bot import DISCORD_FUNCTIONS
+except ImportError:
+    DISCORD_FUNCTIONS = {}
+
 class ConvoBuiltins:
     """Container for all built-in Convo functions"""
     
@@ -279,3 +285,6 @@ BUILTIN_FUNCTIONS = {
     'parse_json': ConvoBuiltins.parse_json,
     'to_json': ConvoBuiltins.to_json,
 }
+
+# Add Discord functions if available
+BUILTIN_FUNCTIONS.update(DISCORD_FUNCTIONS)

@@ -16,6 +16,7 @@ Convo is a **fully functional programming language** that reads like natural Eng
 - 🔧 **Full Programming Language** - Variables, functions, control flow, loops
 - 🏗️ **Complete Architecture** - Lexer, parser, interpreter, and AST
 - 🎮 **Real Applications** - Build games, calculators, and interactive programs
+- 🤖 **Discord Bot Support** - Create Discord bots with natural language
 - 🐍 **Python-Based** - Built with Python for easy extension
 - 🧪 **Well Tested** - Comprehensive test suite (17 tests passing)
 - 🚀 **VS Code Support** - Syntax highlighting and debugging
@@ -68,11 +69,15 @@ Convo comes with several working example programs:
 - **📊 Grade Calculator** (`grade_calculator.convo`) - Student grade management system
 - **🌤️ Weather App** (`weather_app.convo`) - Weather advisory system
 - **🔧 Enhanced Demo** (`enhanced_demo.convo`) - Comprehensive language feature showcase
+- **🤖 Discord Bot Basic** (`discord_bot_basic.convo`) - Simple Discord bot with commands
+- **🤖 Discord Bot Advanced** (`discord_bot_advanced.convo`) - Complex Discord bot with games and moderation
+- **📋 Discord Setup Guide** (`discord_setup_guide.convo`) - Complete Discord bot setup tutorial
 
 Try them:
 ```bash
 python main.py examples/game_demo.convo
 python main.py examples/enhanced_demo.convo
+python main.py examples/discord_setup_guide.convo
 ```
 
 ## 📝 Language Syntax
@@ -130,6 +135,28 @@ Define weather_system with temp, is_raining:
         Say "Stay inside!"
 ```
 
+### Discord Bot Development
+```convo
+# Create a Discord bot
+Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
+
+# Listen for messages
+Define handle_hello with message:
+    Let username be get_user_name(message)
+    Return "Hello " + username + "!"
+
+Call listen_for_message with "contains \"hello\"", handle_hello
+
+# Add commands
+Define bot_info with ctx:
+    Return "I'm a bot written in Convo!"
+
+Call add_discord_command with "info", "Get bot info", bot_info
+
+# Start the bot
+Call start_discord_bot
+```
+
 ## 🏗️ Project Structure
 
 ```
@@ -150,6 +177,50 @@ tests/               # Comprehensive test suite
 python -m pytest tests/ -v
 ```
 
+## 🤖 Discord Bot Development
+
+Convo makes Discord bot development incredibly simple with natural language syntax:
+
+### Setup
+1. Install Discord.py: `pip install discord.py`
+2. Get a bot token from Discord Developer Portal
+3. Replace `YOUR_BOT_TOKEN` in examples with your token
+
+### Quick Start
+```convo
+# Create and configure a Discord bot
+Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
+
+# Add message listeners
+Define greet_user with message:
+    Let username be get_user_name(message)
+    Return "Hello " + username + "! Welcome to the server!"
+
+Call listen_for_message with "contains \"hello\"", greet_user
+
+# Add custom commands
+Define tell_joke with ctx:
+    Return "Why did the programmer quit? Because they didn't get arrays! 😄"
+
+Call add_discord_command with "joke", "Get a programming joke", tell_joke
+
+# Start the bot
+Call start_discord_bot
+```
+
+### Available Discord Functions
+- `create_discord_bot(token, prefix)` - Create bot instance
+- `listen_for_message(condition, handler)` - Listen for specific messages
+- `add_discord_command(name, description, handler)` - Add slash commands
+- `start_discord_bot()` - Start the bot
+- `get_user_name(message)` - Get username from message
+- `get_message_content(message)` - Get message text
+
+### Examples Included
+- **Basic Bot** - Simple greetings and commands
+- **Advanced Bot** - Games, moderation, polls, and utilities
+- **Setup Guide** - Complete tutorial for Discord bot creation
+
 ## 🛠️ Development
 
 ### VS Code Tasks
@@ -169,9 +240,11 @@ python -m pytest tests/ -v
 ## 🎯 Use Cases
 
 - **Education** - Teaching programming concepts with natural language
+- **Discord Bots** - Create interactive Discord bots with conversational syntax
 - **Prototyping** - Quick scripting with readable syntax
 - **Domain-Specific Languages** - Building readable automation scripts
 - **Accessibility** - Programming for users who prefer natural language
+- **Game Development** - Simple game logic and interactive experiences
 
 ## 🤝 Contributing
 

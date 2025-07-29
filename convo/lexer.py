@@ -110,8 +110,10 @@ class Lexer:
         return None
     
     def skip_whitespace(self):
-        while self.peek() and self.peek() in ' \t':
+        char = self.peek()
+        while char and char in ' \t':
             self.advance()
+            char = self.peek()
     
     def read_string(self) -> str:
         quote_char = self.advance()  # Skip opening quote
@@ -128,11 +130,11 @@ class Lexer:
                     value += '\t'
                 elif next_char == '\\':
                     value += '\\'
-                elif next_char == quote_char:
+                elif next_char and next_char == quote_char:
                     value += quote_char
-                else:
+                elif next_char:
                     value += next_char
-            else:
+            elif char:
                 value += char
         
         if not self.peek():
@@ -145,30 +147,40 @@ class Lexer:
         value = ""
         has_dot = False
         
-        while self.peek() and (self.peek().isdigit() or self.peek() == '.'):
-            if self.peek() == '.':
+        char = self.peek()
+        while char and (char.isdigit() or char == '.'):
+            if char == '.':
                 if has_dot:
                     break
                 has_dot = True
-            value += self.advance()
+            next_char = self.advance()
+            if next_char:
+                value += next_char
+            char = self.peek()
         
         return float(value) if has_dot else int(value)
     
     def read_identifier(self) -> str:
         value = ""
-        while self.peek() and (self.peek().isalnum() or self.peek() == '_'):
-            value += self.advance()
+        char = self.peek()
+        while char and (char.isalnum() or char == '_'):
+            next_char = self.advance()
+            if next_char:
+                value += next_char
+            char = self.peek()
         return value
     
     def handle_indentation(self):
         # Count leading spaces/tabs
         indent_level = 0
-        while self.peek() and self.peek() in ' \t':
-            if self.peek() == ' ':
+        char = self.peek()
+        while char and char in ' \t':
+            if char == ' ':
                 indent_level += 1
             else:  # tab
                 indent_level += 4  # Treat tab as 4 spaces
             self.advance()
+            char = self.peek()
         
         current_indent = self.indent_stack[-1]
         
@@ -239,21 +251,28 @@ class Lexer:
                 at_line_start = True
                 continue
             
-            if char in ' \t':
+            if char and char in ' \t':
                 self.skip_whitespace()
                 continue
             
-            if char in '"\'':
+            if char and char in '"\'':
                 value = self.read_string()
                 self.tokens.append(Token(TokenType.STRING, value, self.line, self.column))
                 continue
             
-            if char.isdigit():
+            if char == '#':
+                # Skip comments until end of line
+                while char and char != '\n':
+                    self.advance()
+                    char = self.peek()
+                continue
+            
+            if char and char.isdigit():
                 value = self.read_number()
                 self.tokens.append(Token(TokenType.NUMBER, value, self.line, self.column))
                 continue
             
-            if char.isalpha() or char == '_':
+            if char and (char.isalpha() or char == '_'):
                 value = self.read_identifier().lower()
                 token_type = keywords.get(value, TokenType.IDENTIFIER)
                 self.tokens.append(Token(token_type, value, self.line, self.column))

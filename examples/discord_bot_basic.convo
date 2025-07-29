@@ -1,0 +1,67 @@
+# Simple Discord Bot Example in Convo
+# This demonstrates basic Discord bot functionality
+
+Say "Setting up Discord Bot..."
+
+# Replace 'YOUR_BOT_TOKEN' with your actual Discord bot token
+Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
+
+Say "Bot created! Setting up listeners..."
+
+# Listen for messages containing "hello"
+Define handle_hello with message:
+    Let username be get_user_name(message)
+    Return "Hello there, " + username + "! How are you today?"
+
+Call listen_for_message with "contains \"hello\"", handle_hello
+
+# Listen for messages containing "ping"  
+Define handle_ping with message:
+    Return "Pong! 🏓"
+
+Call listen_for_message with "contains \"ping\"", handle_ping
+
+# Add a command for bot info
+Define bot_info with ctx:
+    Return "I'm a Discord bot written in the Convo programming language! 🤖"
+
+Call add_discord_command with "info", "Get information about this bot", bot_info
+
+# Add a command for random jokes
+Define tell_joke with ctx:
+    Let jokes be ["Why don't scientists trust atoms? Because they make up everything!", 
+                  "What do you call a fake noodle? An impasta!",
+                  "Why did the scarecrow win an award? He was outstanding in his field!",
+                  "What's the best thing about Switzerland? I don't know, but the flag is a big plus."]
+    
+    Let random_index be random_int(0, 3)
+    Return jokes[random_index]
+
+Call add_discord_command with "joke", "Get a random joke", tell_joke
+
+# Add a math command
+Define do_math with ctx, operation, num1, num2:
+    Let n1 be to_number(num1)
+    Let n2 be to_number(num2)
+    
+    If operation equals "add" then:
+        Return n1 + n2
+    Else:
+        If operation equals "multiply" then:
+            Return n1 * n2
+        Else:
+            If operation equals "subtract" then:
+                Return n1 - n2
+            Else:
+                Return "Supported operations: add, multiply, subtract"
+
+Call add_discord_command with "math", "Perform basic math operations", do_math
+
+Say "Discord bot setup complete! Starting bot..."
+Say "Make sure to:"
+Say "1. Replace 'YOUR_BOT_TOKEN' with your actual bot token"
+Say "2. Invite the bot to your Discord server"
+Say "3. The bot will respond to 'hello', 'ping', and commands like !info, !joke, !math"
+
+# Start the bot (this will run indefinitely)
+Call start_discord_bot

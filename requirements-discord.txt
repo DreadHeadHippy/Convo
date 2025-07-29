@@ -1,0 +1,14 @@
+# Requirements for Convo Discord Bot Development
+# Install with: pip install -r requirements-discord.txt
+
+# Core Convo requirements
+pytest>=8.0.0
+
+# Discord bot requirements
+discord.py>=2.3.0
+aiohttp>=3.8.0
+
+# Optional enhancements
+python-dotenv>=1.0.0  # For environment variable management
+asyncio-mqtt>=0.16.0  # For advanced messaging
+requests>=2.31.0      # For HTTP requests in bots

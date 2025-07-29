@@ -1,0 +1,148 @@
+# Advanced Discord Bot Example in Convo
+# This demonstrates more complex Discord bot features
+
+Say "Creating Advanced Discord Bot..."
+
+# Create bot with custom prefix
+Call create_discord_bot with "YOUR_BOT_TOKEN", ">"
+
+Say "Advanced bot created! Setting up complex features..."
+
+# Server welcome messages
+Define welcome_user with message:
+    Let content be get_message_content(message)
+    If contains(content, "joined the server") then:
+        Let username be get_user_name(message)
+        Return "Welcome to the server, " + username + "! 🎉 Make sure to read the rules!"
+
+Call listen_for_message with "contains \"joined\"", welcome_user
+
+# Moderation - detect bad words
+Define moderate_message with message:
+    Let content be lower(get_message_content(message))
+    Let bad_words be ["spam", "toxic", "inappropriate"]
+    
+    Let i be 0
+    While i less than length(bad_words) do:
+        If contains(content, bad_words[i]) then:
+            Let username be get_user_name(message)
+            Return "⚠️ " + username + ", please keep the chat friendly!"
+        Let i be i + 1
+
+Call listen_for_message with "contains \"spam\"", moderate_message
+
+# User stats command
+Define user_stats with ctx, user_mention:
+    Let stats be "📊 User Stats for " + user_mention + ":\n"
+    Let stats be stats + "• Account Type: Standard User\n"
+    Let stats be stats + "• Server Boost: No\n"
+    Let stats be stats + "• Last Active: Recently\n"
+    Return stats
+
+Call add_discord_command with "stats", "Get user statistics", user_stats
+
+# Server info command
+Define server_info with ctx:
+    Return "🏠 Server Information:\n• Name: This Amazing Server\n• Members: Many!\n• Created: A while ago\n• Boost Level: Unknown"
+
+Call add_discord_command with "serverinfo", "Get server information", server_info
+
+# Poll command
+Define create_poll with ctx, question:
+    Let poll_text be "📊 **POLL:** " + question + "\n\n"
+    Let poll_text be poll_text + "React with:\n"
+    Let poll_text be poll_text + "✅ for YES\n"
+    Let poll_text be poll_text + "❌ for NO\n"
+    Let poll_text be poll_text + "🤷 for MAYBE"
+    Return poll_text
+
+Call add_discord_command with "poll", "Create a simple poll", create_poll
+
+# Quote of the day
+Define quote_of_day with ctx:
+    Let quotes be [
+        "The only way to do great work is to love what you do. - Steve Jobs",
+        "Innovation distinguishes between a leader and a follower. - Steve Jobs", 
+        "Life is what happens to you while you're busy making other plans. - John Lennon",
+        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+        "It is during our darkest moments that we must focus to see the light. - Aristotle"
+    ]
+    
+    Let random_quote be quotes[random_int(0, 4)]
+    Return "💭 **Quote of the Day:**\n*" + random_quote + "*"
+
+Call add_discord_command with "quote", "Get an inspiring quote", quote_of_day
+
+# Rock Paper Scissors game
+Define rock_paper_scissors with ctx, user_choice:
+    Let choices be ["rock", "paper", "scissors"]
+    Let bot_choice be choices[random_int(0, 2)]
+    
+    Let result be "🎮 **Rock Paper Scissors**\n"
+    Let result be result + "You chose: " + user_choice + "\n"
+    Let result be result + "I chose: " + bot_choice + "\n\n"
+    
+    If user_choice equals bot_choice then:
+        Let result be result + "🤝 It's a tie!"
+    Else:
+        If user_choice equals "rock" and bot_choice equals "scissors" then:
+            Let result be result + "🎉 You win!"
+        Else:
+            If user_choice equals "paper" and bot_choice equals "rock" then:
+                Let result be result + "🎉 You win!"
+            Else:
+                If user_choice equals "scissors" and bot_choice equals "paper" then:
+                    Let result be result + "🎉 You win!"
+                Else:
+                    Let result be result + "🤖 I win!"
+    
+    Return result
+
+Call add_discord_command with "rps", "Play Rock Paper Scissors", rock_paper_scissors
+
+# Weather (mock) command
+Define weather_report with ctx, location:
+    Let weather_data be "🌤️ **Weather for " + location + ":**\n"
+    Let weather_data be weather_data + "Temperature: " + to_text(random_int(15, 35)) + "°C\n"
+    Let weather_data be weather_data + "Condition: "
+    
+    Let conditions be ["Sunny", "Cloudy", "Rainy", "Partly Cloudy"]
+    Let condition be conditions[random_int(0, 3)]
+    Let weather_data be weather_data + condition + "\n"
+    Let weather_data be weather_data + "Humidity: " + to_text(random_int(30, 90)) + "%"
+    
+    Return weather_data
+
+Call add_discord_command with "weather", "Get weather for a location", weather_report
+
+# Help command
+Define bot_help with ctx:
+    Let help_text be "🤖 **Available Commands:**\n\n"
+    Let help_text be help_text + ">stats @user - Get user statistics\n"
+    Let help_text be help_text + ">serverinfo - Get server information\n" 
+    Let help_text be help_text + ">poll <question> - Create a poll\n"
+    Let help_text be help_text + ">quote - Get quote of the day\n"
+    Let help_text be help_text + ">rps <rock/paper/scissors> - Play game\n"
+    Let help_text be help_text + ">weather <location> - Get weather\n"
+    Let help_text be help_text + "\n**Message Triggers:**\n"
+    Let help_text be help_text + "• Say 'hello' and I'll greet you!\n"
+    Let help_text be help_text + "• I'll moderate inappropriate content\n"
+    Let help_text be help_text + "• I'll welcome new members"
+    
+    Return help_text
+
+Call add_discord_command with "help", "Show all available commands", bot_help
+
+Say "Advanced Discord bot setup complete!"
+Say "Features included:"
+Say "• Welcome messages"
+Say "• Content moderation"
+Say "• User and server stats"
+Say "• Polls and games"
+Say "• Weather reports"
+Say "• Quotes and more!"
+Say ""
+Say "Starting advanced bot..."
+
+# Start the bot
+Call start_discord_bot
