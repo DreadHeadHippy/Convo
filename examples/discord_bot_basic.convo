@@ -3,8 +3,15 @@
 
 Say "Setting up Discord Bot..."
 
-# Replace 'YOUR_BOT_TOKEN' with your actual Discord bot token
-Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
+# Get bot token from environment variable for security
+Let token be get_env("DISCORD_BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
+
+If token equals "YOUR_BOT_TOKEN_HERE" then:
+    Say "WARNING: Please set DISCORD_BOT_TOKEN environment variable!"
+    Say "Example: set DISCORD_BOT_TOKEN=your_token_here"
+    Stop
+
+Let bot_created be create_discord_bot(token, "!")
 
 Say "Bot created! Setting up listeners..."
 

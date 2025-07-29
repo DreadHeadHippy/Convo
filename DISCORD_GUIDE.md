@@ -34,15 +34,25 @@ The **Convo programming language** (NOT Python!) now includes complete groundwor
 ### 2. Your First Discord Bot in Convo
 
 ```convo
-# Simple Discord Bot
-Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
+# Simple Discord Bot with Secure Token Handling
+
+# Get bot token from environment variable for security
+Let token be get_env("DISCORD_BOT_TOKEN")
+
+If token equals None then:
+    Say "ERROR: DISCORD_BOT_TOKEN environment variable not set!"
+    Say "Please set your Discord bot token as an environment variable."
+    Stop
+
+# Create bot with secure token
+Let bot_created be create_discord_bot(token, "!")
 
 # Listen for hello messages
 Define greet_user with message:
     Let username be get_user_name(message)
     Return "Hello " + username + "! Welcome to our server!"
 
-Call listen_for_message with "contains \"hello\"", greet_user
+Let listener_added be listen_for_message("contains \"hello\"", greet_user)
 
 # Add a ping command
 Define ping_command with ctx:
@@ -182,10 +192,15 @@ Call start_discord_bot
 ## Best Practices
 
 ### Security
-1. **Never share your bot token publicly**
-2. **Store tokens in environment variables or config files**
-3. **Use specific permissions, avoid Administrator role**
-4. **Test bots in private servers first**
+1. **Use environment variables for bot tokens** - `Let token be get_env("DISCORD_BOT_TOKEN")`
+2. **Never hardcode tokens in your Convo files**
+3. **Set up secure token storage:**
+   - Windows (PowerShell): `$env:DISCORD_BOT_TOKEN='your_token_here'`
+   - Windows (Command Prompt): `set DISCORD_BOT_TOKEN=your_token_here`
+   - Linux/Mac: `export DISCORD_BOT_TOKEN='your_token_here'`
+4. **Use specific permissions, avoid Administrator role**
+5. **Test bots in private servers first**
+6. **Check for token existence:** `If token equals None then: Stop`
 
 ### Code Organization
 1. **Define handlers before registering them**

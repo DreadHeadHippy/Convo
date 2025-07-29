@@ -3,8 +3,16 @@
 
 Say "Creating Advanced Discord Bot..."
 
+# Get bot token from environment variable for security
+Let token be get_env("DISCORD_BOT_TOKEN")
+
+If token equals None then:
+    Say "ERROR: DISCORD_BOT_TOKEN environment variable not set!"
+    Say "Please set your Discord bot token as an environment variable."
+    Stop
+
 # Create bot with custom prefix
-Call create_discord_bot with "YOUR_BOT_TOKEN", ">"
+Let bot_created be create_discord_bot(token, ">")
 
 Say "Advanced bot created! Setting up complex features..."
 

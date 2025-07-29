@@ -1,0 +1,45 @@
+# Environment Variables Demo
+
+Say "=== Environment Variables Demo ==="
+
+# Check if a Discord token exists
+Say "Checking for DISCORD_BOT_TOKEN..."
+If has_env("DISCORD_BOT_TOKEN") then:
+    Say "Token exists (hidden for security)"
+Else:
+    Say "No Discord token found"
+
+# Check common environment variables
+Say ""
+Say "Common environment variables:"
+Let common_vars be ["PATH", "USER", "USERNAME", "HOME", "USERPROFILE"]
+For each var in common_vars do:
+    If has_env(var) then:
+        Say var + " is set"
+    Else:
+        Say var + " is not set"
+
+# Demo setting and getting environment variables
+Say ""
+Say "Setting test environment variable..."
+Call set_env with "CONVO_TEST" and "Hello from Convo!"
+
+Let test_value be get_env("CONVO_TEST")
+Say "Retrieved test value: " + test_value
+
+# Demo getting with default value
+Let missing_value be get_env("NONEXISTENT_VAR", "default_value")
+Say "Missing variable with default: " + missing_value
+
+# List all environment variables (first 5 for demo)
+Say ""
+Say "First 5 environment variables:"
+Let all_vars be list_env()
+Let count be 0
+For each var in all_vars do:
+    If count less than 5 then:
+        Say var
+        Let count be count + 1
+
+Say ""
+Say "Total environment variables: " + str(len(all_vars))

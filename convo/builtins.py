@@ -238,6 +238,28 @@ class ConvoBuiltins:
             return json.dumps(obj, indent=2)
         except TypeError as e:
             raise RuntimeError(f"Cannot convert to JSON: {e}")
+    
+    # Environment variable functions
+    @staticmethod
+    def get_env(name, default=None):
+        """Get an environment variable value"""
+        return os.environ.get(name, default)
+    
+    @staticmethod
+    def set_env(name, value):
+        """Set an environment variable (for current session only)"""
+        os.environ[name] = str(value)
+        return True
+    
+    @staticmethod
+    def has_env(name):
+        """Check if an environment variable exists"""
+        return name in os.environ
+    
+    @staticmethod
+    def list_env():
+        """Get all environment variables as a dictionary"""
+        return dict(os.environ)
 
 # Dictionary of all built-in functions
 BUILTIN_FUNCTIONS = {
@@ -284,6 +306,12 @@ BUILTIN_FUNCTIONS = {
     # JSON functions
     'parse_json': ConvoBuiltins.parse_json,
     'to_json': ConvoBuiltins.to_json,
+    
+    # Environment variable functions
+    'get_env': ConvoBuiltins.get_env,
+    'set_env': ConvoBuiltins.set_env,
+    'has_env': ConvoBuiltins.has_env,
+    'list_env': ConvoBuiltins.list_env,
 }
 
 # Add Discord functions if available

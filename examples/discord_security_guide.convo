@@ -1,0 +1,52 @@
+# Discord Bot Security Setup Guide
+
+Say "=== Discord Bot Security with Environment Variables ==="
+Say ""
+
+# Check if Discord bot token is set
+Say "Checking Discord bot token..."
+Let has_token be has_env("DISCORD_BOT_TOKEN")
+
+If has_token then:
+    Say "✓ DISCORD_BOT_TOKEN is set!"
+    
+    # Get the token (hide it for security)
+    Let token be get_env("DISCORD_BOT_TOKEN")
+    Let token_length be length(token)
+    Say "Token length: " + to_text(token_length) + " characters"
+    
+    # Show first and last few characters for verification
+    If token_length greater than 10 then:
+        Let start_chars be token[0] + token[1] + token[2]
+        Let end_chars be token[token_length - 3] + token[token_length - 2] + token[token_length - 1]
+        Say "Token preview: " + start_chars + "..." + end_chars
+Else:
+    Say "✗ DISCORD_BOT_TOKEN not found!"
+    Say ""
+    Say "To set up your Discord bot token securely:"
+    Say "1. Windows (PowerShell): $env:DISCORD_BOT_TOKEN='your_token_here'"
+    Say "2. Windows (Command Prompt): set DISCORD_BOT_TOKEN=your_token_here"
+    Say "3. Linux/Mac: export DISCORD_BOT_TOKEN='your_token_here'"
+    Say ""
+    Say "Or create a .env file (not recommended for production):"
+    Say "DISCORD_BOT_TOKEN=your_token_here"
+
+Say ""
+Say "=== Environment Security Best Practices ==="
+Say "1. Never hardcode tokens in your Convo files"
+Say "2. Use environment variables for all sensitive data"
+Say "3. Add .env files to .gitignore if using them"
+Say "4. Use different tokens for development and production"
+Say ""
+
+# Show example of secure bot creation
+Say "Example of secure bot creation in Convo:"
+Say ""
+Say "Let token be get_env('DISCORD_BOT_TOKEN')"
+Say "If token equals None then:"
+Say "    Say 'Error: Bot token not set!'"
+Say "    Stop"
+Say "Let bot be create_discord_bot(token, '!')"
+Say ""
+
+Say "This ensures your bot token is never exposed in your code!"
