@@ -2,7 +2,9 @@
 
 ## 🎯 Overview
 
-The Convo programming language now includes **complete groundwork** for Discord bot development. This infrastructure allows developers to create Discord bots using Convo's natural language syntax instead of traditional programming languages.
+The **Convo programming language** (NOT Python!) now includes complete groundwork for Discord bot development. This allows developers to create Discord bots using **pure Convo syntax** - a completely separate programming language with natural language syntax - instead of traditional programming languages like Python, JavaScript, or Java.
+
+**Key Point**: You write Discord bots in **100% Convo language syntax**. The Python discord.py library is used internally by the Convo interpreter, but developers never see or write Python code.
 
 ## 🏗️ What We've Built
 
@@ -55,8 +57,35 @@ Call start_discord_bot
 ### 3. Run Your Bot
 
 ```bash
+# Run your Convo language Discord bot
 python main.py your_bot_file.convo
 ```
+
+**Important**: You're running the **Convo interpreter** (which happens to be implemented in Python) to execute your **Convo language** bot code. This is exactly like running a Java program with `java MyProgram.java` - the JVM is written in C++, but you're writing Java, not C++.
+
+## Why This Matters: Convo vs Python
+
+### What You Write (Pure Convo Language):
+```convo
+Call create_discord_bot with "TOKEN", "!"
+Define greet with message:
+    Let name be get_user_name(message)
+    Return "Hello " + name + "!"
+Call listen_for_message with "contains \"hi\"", greet
+Call start_discord_bot
+```
+
+### What You DON'T Write (Python - this is hidden):
+```python
+import discord
+from discord.ext import commands
+bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+@bot.event
+async def on_message(message):
+    # Complex Python async/await code...
+```
+
+**The Convo interpreter handles all the Python complexity for you!**
 
 ## Core Discord Functions
 

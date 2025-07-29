@@ -179,7 +179,12 @@ python -m pytest tests/ -v
 
 ## 🤖 Discord Bot Development
 
-Convo makes Discord bot development incredibly simple with natural language syntax:
+**Convo is a real programming language** - when you write Discord bots in Convo, you're writing in **pure Convo syntax**, not Python! The Convo interpreter handles all the Python complexity internally.
+
+### Why This Matters
+- **You write**: Natural Convo language (`Call create_discord_bot with "TOKEN"`)
+- **You DON'T write**: Complex Python (`@bot.command`, `async def`, `await ctx.send()`)
+- **Convo handles**: All Discord API complexity, async/await, error handling
 
 ### Setup
 1. Install Discord.py: `pip install discord.py`
