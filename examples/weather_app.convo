@@ -1,0 +1,40 @@
+Let temperature be 75
+Let humidity be 60
+Let is_sunny be true
+
+Say "Weather Report for Today"
+Say "========================="
+
+If temperature greater than 80 then:
+    Say "It's a hot day! Temperature: " + temperature + "°F"
+Else:
+    If temperature greater than 60 then:
+        Say "Nice weather! Temperature: " + temperature + "°F"
+    Else:
+        Say "It's cold! Temperature: " + temperature + "°F"
+
+If humidity greater than 70 then:
+    Say "High humidity: " + humidity + "%"
+Else:
+    Say "Comfortable humidity: " + humidity + "%"
+
+If is_sunny equals true then:
+    Say "It's sunny outside! ☀️"
+Else:
+    Say "It's cloudy today ☁️"
+
+Define weather_advice with temp, humid, sunny:
+    If temp greater than 85 and humid greater than 75 then:
+        Say "Stay hydrated and find shade!"
+    Else:
+        If temp less than 32 then:
+            Say "Bundle up, it's freezing!"
+        Else:
+            If sunny equals true then:
+                Say "Great day to go outside!"
+            Else:
+                Say "Maybe stay indoors today"
+
+Say ""
+Say "Weather Advice:"
+Call weather_advice with temperature, humidity, is_sunny

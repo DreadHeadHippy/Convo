@@ -1,3 +1,17 @@
-# Add .gitattributes to define Convo language detection
+# GitHub Linguist configuration for Convo language detection
 *.convo linguist-language=Convo
 *.convo linguist-detectable=true
+
+# Mark Python interpreter as vendored/infrastructure
+convo/*.py linguist-vendored=true
+main.py linguist-vendored=true
+tests/*.py linguist-vendored=true
+
+# Make sure Convo examples are counted as main content
+examples/*.convo linguist-detectable=true
+examples/*.convo linguist-documentation=false
+
+# Don't count config files
+.vscode/* linguist-vendored=true
+requirements.txt linguist-vendored=true
+.gitignore linguist-vendored=true

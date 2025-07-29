@@ -1,0 +1,58 @@
+Let class_name be "Computer Science 101"
+Let total_students be 25
+Let passed_students be 0
+
+Say "Grade Calculator for " + class_name
+Say "=================================="
+
+Define calculate_grade with score:
+    If score greater than 90 then:
+        Say "Grade: A (Excellent!)"
+    Else:
+        If score greater than 80 then:
+            Say "Grade: B (Good work!)"
+        Else:
+            If score greater than 70 then:
+                Say "Grade: C (Satisfactory)"
+            Else:
+                If score greater than 60 then:
+                    Say "Grade: D (Needs improvement)"
+                Else:
+                    Say "Grade: F (Failed)"
+
+Let student_count be 1
+While student_count less than 6 do:
+    Say ""
+    Say "Student " + student_count + ":"
+    
+    If student_count equals 1 then:
+        Let score be 95
+    Else:
+        If student_count equals 2 then:
+            Let score be 87
+        Else:
+            If student_count equals 3 then:
+                Let score be 76
+            Else:
+                If student_count equals 4 then:
+                    Let score be 92
+                Else:
+                    Let score be 58
+    
+    Say "Score: " + score + "/100"
+    Call calculate_grade with score
+    
+    If score greater than 60 then:
+        Let passed_students be passed_students + 1
+    
+    Let student_count be student_count + 1
+
+Say ""
+Say "Class Summary:"
+Say "=============="
+Say "Students evaluated: 5"
+Say "Students passed: " + passed_students
+Say "Students failed: " + (5 - passed_students)
+
+Let pass_rate be (passed_students * 100) / 5
+Say "Pass rate: " + pass_rate + "%"

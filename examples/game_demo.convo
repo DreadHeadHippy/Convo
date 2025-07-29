@@ -1,0 +1,53 @@
+Let player_name be "Alex"
+Let player_health be 100
+Let player_score be 0
+Let monster_health be 50
+
+Say "Welcome to Convo Quest, " + player_name + "!"
+Say "Your adventure begins now..."
+Say ""
+
+Define attack_monster with damage:
+    Let monster_health be monster_health - damage
+    Say "You attack the monster for " + damage + " damage!"
+    Say "Monster health: " + monster_health
+
+Define heal_player with amount:
+    Let player_health be player_health + amount
+    Say "You heal for " + amount + " health points!"
+    Say "Your health: " + player_health
+
+Say "A wild monster appears!"
+Say "Monster Health: " + monster_health
+Say "Your Health: " + player_health
+Say ""
+
+Let turn be 1
+While monster_health greater than 0 and player_health greater than 0 do:
+    Say "Turn " + turn + ":"
+    
+    If turn equals 1 then:
+        Call attack_monster with 20
+    Else:
+        If turn equals 2 then:
+            Call attack_monster with 15
+        Else:
+            Call heal_player with 10
+    
+    If monster_health greater than 0 then:
+        Let damage_to_player be 12
+        Let player_health be player_health - damage_to_player
+        Say "Monster attacks you for " + damage_to_player + " damage!"
+        Say "Your health: " + player_health
+    
+    Let turn be turn + 1
+    Say ""
+
+If monster_health less than 1 then:
+    Let player_score be player_score + 100
+    Say "Victory! You defeated the monster!"
+    Say "Score: " + player_score
+Else:
+    Say "Game Over! You were defeated..."
+
+Say "Thanks for playing Convo Quest!"
