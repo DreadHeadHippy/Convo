@@ -1,0 +1,35 @@
+Let user_name be "Alice"
+Let user_age be 25
+Let balance be 1000.50
+
+Say "Welcome to Convo Bank, " + user_name + "!"
+Say "Your current balance is $" + balance
+
+Define check_eligibility with age, balance:
+    If age greater than 18 and balance greater than 500 then:
+        Say "You are eligible for a premium account!"
+    Else:
+        Say "Standard account features available."
+
+Define calculate_interest with principal, rate, years:
+    Let interest be principal * rate * years
+    Say "Interest earned: $" + interest
+    Let total be principal + interest
+    Say "Total amount: $" + total
+
+Call check_eligibility with user_age, balance
+
+Let interest_rate be 0.05
+Let years be 2
+Let percentage be interest_rate * 100
+
+Say "Calculating interest for " + years + " years at " + percentage + "% rate:"
+Call calculate_interest with balance, interest_rate, years
+
+Let count be 1
+Say "Processing monthly statements:"
+While count less than 4 do:
+    Say "Month " + count + " statement processed"
+    Let count be count + 1
+
+Say "Thank you for using Convo Bank!"

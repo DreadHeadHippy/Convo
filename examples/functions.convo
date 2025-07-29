@@ -1,0 +1,22 @@
+Define greeting with name:
+    Say "Hello, " + name + "!"
+    Say "Nice to meet you!"
+
+Define add_numbers with a, b:
+    Let result be a + b
+    Say "The sum of " + a + " and " + b + " is " + result
+
+Define check_age with age:
+    If age greater than 18 then:
+        Say "You are an adult"
+    Else:
+        Say "You are a minor"
+
+Call greeting with "World"
+Call greeting with "Alice"
+
+Call add_numbers with 5, 3
+Call add_numbers with 10, 25
+
+Call check_age with 25
+Call check_age with 16

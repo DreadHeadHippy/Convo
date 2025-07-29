@@ -1,0 +1,25 @@
+Let score be 85
+Let grade be ""
+
+If score greater than 90 then:
+    Let grade be "A"
+Else:
+    If score greater than 80 then:
+        Let grade be "B"
+    Else:
+        If score greater than 70 then:
+            Let grade be "C"
+        Else:
+            Let grade be "F"
+
+Say "Your score is " + score
+Say "Your grade is " + grade
+
+Let count be 1
+Say "Counting to 5:"
+
+While count less than 6 do:
+    Say "Count: " + count
+    Let count be count + 1
+
+Say "Done counting!"

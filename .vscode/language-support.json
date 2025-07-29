@@ -1,0 +1,19 @@
+{
+  "contributes": {
+    "languages": [
+      {
+        "id": "convo",
+        "aliases": ["Convo", "convo"],
+        "extensions": [".convo"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "convo",
+        "scopeName": "source.convo",
+        "path": "./convo.tmLanguage.json"
+      }
+    ]
+  }
+}

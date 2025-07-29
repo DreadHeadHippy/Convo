@@ -1,0 +1,13 @@
+Let my_name be "Alice"
+Let age be 25
+Let city be "New York"
+
+Say "Hello! My name is " + my_name
+Say "I am " + age + " years old"
+Say "I live in " + city
+
+Let next_year be age + 1
+Say "Next year I will be " + next_year + " years old"
+
+Let full_intro be "Hi, I'm " + my_name + " from " + city
+Say full_intro

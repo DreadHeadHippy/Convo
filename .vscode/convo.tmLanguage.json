@@ -1,0 +1,42 @@
+{
+  "name": "Convo",
+  "scopeName": "source.convo",
+  "fileTypes": ["convo"],
+  "patterns": [
+    {
+      "name": "keyword.control.convo",
+      "match": "\\b(Say|Let|be|Define|with|Call|If|then|Else|While|do|and|or|not|greater|less|than|equals|is)\\b"
+    },
+    {
+      "name": "string.quoted.double.convo",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.convo",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.convo",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "variable.other.convo",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    },
+    {
+      "name": "keyword.operator.convo",
+      "match": "[+\\-*/]"
+    },
+    {
+      "name": "punctuation.separator.convo",
+      "match": "[,:()]"
+    },
+    {
+      "name": "comment.line.convo",
+      "match": "#.*$"
+    }
+  ]
+}
