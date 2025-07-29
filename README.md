@@ -22,8 +22,8 @@ Convo is a programming language that reads like natural English, making programm
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/convo-language.git
-cd convo-language
+git clone https://github.com/DreadHeadHippy/Convo.git
+cd Convo
 pip install -r requirements.txt
 ```
 
