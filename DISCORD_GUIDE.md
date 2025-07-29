@@ -194,13 +194,17 @@ Call start_discord_bot
 ### Security
 1. **Use environment variables for bot tokens** - `Let token be get_env("DISCORD_BOT_TOKEN")`
 2. **Never hardcode tokens in your Convo files**
-3. **Set up secure token storage:**
+3. **Set up secure token storage using .env file (recommended for development):**
+   - Create a `.env` file in your project directory
+   - Add: `DISCORD_BOT_TOKEN=your_actual_token_here`
+   - The Convo interpreter automatically loads .env files
+4. **Alternative: Set environment variables per session:**
    - Windows (PowerShell): `$env:DISCORD_BOT_TOKEN='your_token_here'`
    - Windows (Command Prompt): `set DISCORD_BOT_TOKEN=your_token_here`
    - Linux/Mac: `export DISCORD_BOT_TOKEN='your_token_here'`
-4. **Use specific permissions, avoid Administrator role**
-5. **Test bots in private servers first**
-6. **Check for token existence:** `If token equals None then: Stop`
+5. **Use specific permissions, avoid Administrator role**
+6. **Test bots in private servers first**
+7. **Check for token existence:** `If token equals None then: Stop`
 
 ### Code Organization
 1. **Define handlers before registering them**

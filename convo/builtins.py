@@ -8,6 +8,21 @@ import os
 import json
 from typing import Any, List, Dict
 
+# Load .env file if it exists
+def _load_env_file():
+    """Load environment variables from .env file if it exists"""
+    env_file = os.path.join(os.getcwd(), '.env')
+    if os.path.exists(env_file):
+        with open(env_file, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key.strip()] = value.strip()
+
+# Load .env on import
+_load_env_file()
+
 # Import Discord functions if available
 try:
     from .modules.discord_bot import DISCORD_FUNCTIONS

@@ -1,3 +1,8 @@
+# Environment files (contains sensitive tokens)
+.env
+.env.local
+.env.*.local
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
