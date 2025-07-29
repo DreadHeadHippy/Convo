@@ -1,0 +1,33 @@
+# GitHub Linguist configuration for Convo programming language
+# This file helps GitHub properly detect and highlight Convo files
+
+# Language definition
+languages:
+  Convo:
+    type: programming
+    color: "#6366f1"
+    extensions:
+    - ".convo"
+    interpreters:
+    - "convo"
+    tm_scope: source.convo
+    ace_mode: text
+    language_id: 999999999
+
+# File associations
+overrides:
+  "*.convo":
+    type: programming
+    language: Convo
+  "examples/*.convo":
+    type: programming
+    language: Convo
+    documentation: false
+
+# Vendor overrides to ensure Python implementation isn't counted as main language
+vendor:
+- "convo/*.py"
+- "tests/*.py" 
+- "main.py"
+- ".vscode/*"
+- "requirements*.txt"

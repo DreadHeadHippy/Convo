@@ -1,0 +1,70 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+    
+    - name: Run tests
+      run: |
+        python -m pytest tests/ -v
+    
+    - name: Create distribution
+      run: |
+        mkdir -p dist
+        zip -r dist/convo-${{ github.ref_name }}.zip . -x "*.git*" "*__pycache__*" "*.pyc" ".pytest_cache/*"
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Convo ${{ github.ref_name }}
+        body: |
+          ## What's New in Convo ${{ github.ref_name }}
+          
+          ### Installation
+          ```bash
+          wget https://github.com/DreadHeadHippy/Convo/releases/download/${{ github.ref_name }}/convo-${{ github.ref_name }}.zip
+          unzip convo-${{ github.ref_name }}.zip
+          cd Convo
+          pip install -r requirements.txt
+          ```
+          
+          ### Quick Start
+          ```bash
+          python -m convo examples/hello_world.convo
+          ```
+          
+          See the [README](https://github.com/DreadHeadHippy/Convo/blob/main/README.md) for full documentation.
+        draft: false
+        prerelease: false
+    
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/convo-${{ github.ref_name }}.zip
+        asset_name: convo-${{ github.ref_name }}.zip
+        asset_content_type: application/zip
