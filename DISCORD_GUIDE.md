@@ -1,22 +1,33 @@
-# Discord Bot Development Guide for Convo Language
+# Discord Bot Development with Convo - Complete Integration Guide
 
-This guide shows you how to create Discord bots using the Convo programming language with its natural, conversational syntax.
+## 🎯 Overview
 
-## Prerequisites
+The Convo programming language now includes **complete groundwork** for Discord bot development. This infrastructure allows developers to create Discord bots using Convo's natural language syntax instead of traditional programming languages.
 
-1. **Python 3.11+** installed on your system
-2. **Discord Developer Account** (free at https://discord.com/developers/applications)
-3. **discord.py library**: Install with `pip install discord.py`
+## 🏗️ What We've Built
 
-## Quick Start
+### Core Infrastructure
 
-### 1. Create a Discord Application
+1. **Complete Discord Module** (`convo/modules/discord_bot.py`)
+   - Full Discord bot wrapper around discord.py
+   - Natural language message condition parsing
+   - Event and command management system
+   - Proper error handling and bot lifecycle management
 
-1. Go to https://discord.com/developers/applications
-2. Click "New Application" and give it a name
-3. Go to the "Bot" section and click "Add Bot"
-4. Copy the Bot Token (keep this secret!)
-5. Enable all Privileged Gateway Intents under the Bot settings
+2. **Seamless Convo Integration** (`convo/builtins.py`)
+   - Discord functions integrated into Convo's built-in function system
+   - All Discord capabilities accessible through natural language syntax
+   - Type-safe function definitions with comprehensive error handling
+
+3. **Ready-to-Use Examples** (`examples/`)
+   - Basic Discord bot template (`discord_bot_basic.convo`)
+   - Advanced Discord bot with games and moderation (`discord_bot_advanced.convo`)
+   - Complete setup guide in Convo syntax (`discord_setup_guide.convo`)
+
+4. **Comprehensive Testing** (`tests/test_discord_integration.py`)
+   - Full test suite for Discord integration
+   - Mock testing for Discord.py components
+   - Validation of all Convo syntax parsing
 
 ### 2. Your First Discord Bot in Convo
 
