@@ -1,6 +1,6 @@
 # 🗣️ Convo Programming Language
 
-**A natural language programming language with conversational syntax**
+**A natural programming language with conversational syntax**
 
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.11+-blue)](https://python.org)
