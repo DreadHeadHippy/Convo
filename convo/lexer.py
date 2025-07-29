@@ -24,6 +24,22 @@ class TokenType(Enum):
     ELSE = auto()         # Else
     WHILE = auto()        # While condition do
     DO = auto()           # While condition do
+    FOR = auto()          # For each item in list
+    EACH = auto()         # For each item in list  
+    IN = auto()           # in keyword
+    BREAK = auto()        # Break from loop
+    CONTINUE = auto()     # Continue loop
+    RETURN = auto()       # Return from function
+    TRY = auto()          # Try block
+    CATCH = auto()        # Catch errors
+    THROW = auto()        # Throw error
+    IMPORT = auto()       # Import module
+    FROM = auto()         # From module import
+    CREATE = auto()       # Create object/list
+    LIST = auto()         # List data type
+    DICTIONARY = auto()   # Dictionary data type
+    CLASS = auto()        # Class definition
+    NEW = auto()          # Create new instance
     
     # Operators
     PLUS = auto()         # +
@@ -43,6 +59,11 @@ class TokenType(Enum):
     COMMA = auto()        # ,
     LPAREN = auto()       # (
     RPAREN = auto()       # )
+    LBRACKET = auto()     # [
+    RBRACKET = auto()     # ]
+    LBRACE = auto()       # {
+    RBRACE = auto()       # }
+    DOT = auto()          # .
     NEWLINE = auto()      # \n
     INDENT = auto()       # indentation
     DEDENT = auto()       # dedentation
@@ -175,6 +196,22 @@ class Lexer:
             'else': TokenType.ELSE,
             'while': TokenType.WHILE,
             'do': TokenType.DO,
+            'for': TokenType.FOR,
+            'each': TokenType.EACH,
+            'in': TokenType.IN,
+            'break': TokenType.BREAK,
+            'continue': TokenType.CONTINUE,
+            'return': TokenType.RETURN,
+            'try': TokenType.TRY,
+            'catch': TokenType.CATCH,
+            'throw': TokenType.THROW,
+            'import': TokenType.IMPORT,
+            'from': TokenType.FROM,
+            'create': TokenType.CREATE,
+            'list': TokenType.LIST,
+            'dictionary': TokenType.DICTIONARY,
+            'class': TokenType.CLASS,
+            'new': TokenType.NEW,
             'and': TokenType.AND,
             'or': TokenType.OR,
             'not': TokenType.NOT,
@@ -232,6 +269,11 @@ class Lexer:
                 ',': TokenType.COMMA,
                 '(': TokenType.LPAREN,
                 ')': TokenType.RPAREN,
+                '[': TokenType.LBRACKET,
+                ']': TokenType.RBRACKET,
+                '{': TokenType.LBRACE,
+                '}': TokenType.RBRACE,
+                '.': TokenType.DOT,
             }
             
             if char in single_char_tokens:

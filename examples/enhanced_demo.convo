@@ -1,0 +1,135 @@
+Say "Enhanced Convo Language Demo"
+Say "============================"
+Say ""
+
+Say "1. Variables and Arithmetic"
+Let name be "Convo"
+Let version be 2.0
+Let year be 2025
+
+Say "Language: " + name
+Say "Version: " + version
+Say "Year: " + year
+
+Let next_version be version + 0.1
+Say "Next version will be: " + next_version
+
+Say ""
+Say "2. Functions and Logic"
+
+Define calculate_grade with score:
+    If score greater than 90 then:
+        Say "Grade: A (Excellent!)"
+    Else:
+        If score greater than 80 then:
+            Say "Grade: B (Good work!)"
+        Else:
+            If score greater than 70 then:
+                Say "Grade: C (Satisfactory)"
+            Else:
+                Say "Grade: F (Need improvement)"
+
+Say "Testing grade calculator:"
+Call calculate_grade with 95
+Call calculate_grade with 85
+Call calculate_grade with 75
+Call calculate_grade with 65
+
+Say ""
+Say "3. Loops and Counters"
+
+Let counter be 1
+Say "Counting to 5:"
+While counter less than 6 do:
+    Say "Count: " + counter
+    Let counter be counter + 1
+
+Say ""
+Say "4. Advanced Math and Comparisons"
+
+Define is_even with number:
+    Let remainder be number - ((number / 2) * 2)
+    If remainder equals 0 then:
+        Say number + " is even"
+    Else:
+        Say number + " is odd"
+
+Say "Testing even/odd checker:"
+Call is_even with 4
+Call is_even with 7
+Call is_even with 10
+Call is_even with 13
+
+Say ""
+Say "5. String Operations"
+
+Let greeting be "Hello"
+Let target be "World"
+Let full_greeting be greeting + ", " + target + "!"
+Say "Full greeting: " + full_greeting
+
+Say ""
+Say "6. Boolean Logic"
+
+Let is_sunny be true
+Let is_warm be false
+Let is_weekend be true
+
+If is_sunny and is_weekend then:
+    Say "Perfect day for outdoor activities!"
+Else:
+    If is_warm or is_weekend then:
+        Say "Good day for some activities"
+    Else:
+        Say "Maybe stay indoors today"
+
+Say ""
+Say "7. Nested Functions"
+
+Define outer_function with x:
+    Say "Outer function called with: " + x
+    
+    Define inner_calculation with y:
+        Let result be x * y + 10
+        Say "Inner result: " + result
+    
+    Call inner_calculation with 5
+    Call inner_calculation with 3
+
+Say "Testing nested functions:"
+Call outer_function with 7
+
+Say ""
+Say "8. Complex Conditions"
+
+Define weather_advisor with temp, is_raining:
+    If temp greater than 25 and not is_raining then:
+        Say "Perfect weather! Go outside and enjoy!"
+    Else:
+        If temp greater than 15 and not is_raining then:
+            Say "Nice weather, but maybe bring a jacket"
+        Else:
+            If is_raining then:
+                Say "It's raining - bring an umbrella!"
+            Else:
+                Say "Cold weather - stay warm inside"
+
+Say "Weather advisor:"
+Call weather_advisor with 28, false
+Call weather_advisor with 18, false
+Call weather_advisor with 22, true
+Call weather_advisor with 8, false
+
+Say ""
+Say "=== Demo Complete! ==="
+Say "Convo language successfully demonstrates:"
+Say "✓ Variables and arithmetic"
+Say "✓ Functions with parameters"
+Say "✓ Conditional logic (if/else)"
+Say "✓ Loops (while)"
+Say "✓ Boolean operations (and/or/not)"
+Say "✓ String concatenation"
+Say "✓ Nested function definitions"
+Say "✓ Complex conditional expressions"
+Say ""
+Say "Ready for production use! 🚀"

@@ -1,0 +1,50 @@
+Let numbers be [1, 2, 3, 4, 5]
+Let names be ["Alice", "Bob", "Charlie"]
+Let mixed_list be [1, "hello", true, 3.14]
+
+Say "Working with Lists in Convo!"
+Say "=========================="
+
+Say "Original numbers: " + to_text(numbers)
+Say "Names list: " + to_text(names)
+
+Let result be append(numbers, 6)
+Say "After appending 6: " + to_text(numbers)
+
+Let list_length be length(numbers)
+Say "Length of numbers list: " + list_length
+
+Say "First number: " + numbers[0]
+Say "Last name: " + names[2]
+
+Say ""
+Say "Iterating through lists:"
+For each number in numbers do:
+    Say "Number: " + number
+
+Say ""
+Say "Checking if items exist:"
+If contains(names, "Alice") then:
+    Say "Alice is in the names list!"
+
+If contains(numbers, 10) then:
+    Say "10 is in numbers"
+Else:
+    Say "10 is not in numbers"
+
+Say ""
+Say "List manipulation:"
+Let original_count be length(names)
+Call append with names, "Diana"
+Let new_count be length(names)
+Say "Added Diana. Count changed from " + original_count + " to " + new_count
+
+Call remove with names, "Bob"
+Say "Removed Bob. Names now: " + to_text(names)
+
+Say ""
+Say "Working with nested lists:"
+Let matrix be [[1, 2], [3, 4], [5, 6]]
+Say "Matrix: " + to_text(matrix)
+Say "First row: " + to_text(matrix[0])
+Say "Element at [1][1]: " + matrix[1][1]

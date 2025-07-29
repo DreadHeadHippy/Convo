@@ -1,0 +1,65 @@
+Say "Error Handling Demo"
+Say "=================="
+
+Say ""
+Say "Example 1: Division by zero"
+Try:
+    Let result be 10 / 0
+    Say "Result: " + result
+Catch error:
+    Say "Caught error: " + error
+    Say "Cannot divide by zero!"
+
+Say ""
+Say "Example 2: Invalid number conversion"
+Try:
+    Let invalid_number be to_number("not_a_number")
+    Say "Converted: " + invalid_number
+Catch error:
+    Say "Caught error: " + error
+    Say "Invalid number format!"
+
+Say ""
+Say "Example 3: File operation error"
+Try:
+    Let content be read_file("nonexistent_file.txt")
+    Say "File content: " + content
+Catch error:
+    Say "Caught error: " + error
+    Say "File not found!"
+
+Say ""
+Say "Example 4: List index error"
+Try:
+    Let numbers be [1, 2, 3]
+    Let value be get(numbers, 10)  # Index out of range
+    Say "Value: " + value
+Catch error:
+    Say "Caught error: " + error
+    Say "Index out of range!"
+
+Say ""
+Say "Example 5: Successful operation in try block"
+Try:
+    Let data be {"name": "Alice", "age": 30}
+    Let name be get(data, "name")
+    Say "Successfully retrieved name: " + name
+Catch error:
+    Say "This won't be executed"
+
+Say ""
+Say "Example 6: Nested try-catch blocks"
+Try:
+    Say "Outer try block"
+    Try:
+        Let result be 5 / 0
+        Say "This won't be printed"
+    Catch inner_error:
+        Say "Inner catch: " + inner_error
+        Throw "Custom error from inner catch"
+    Say "This won't be reached"
+Catch outer_error:
+    Say "Outer catch: " + outer_error
+
+Say ""
+Say "Error handling demo completed!"

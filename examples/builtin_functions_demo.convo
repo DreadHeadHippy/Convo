@@ -1,0 +1,91 @@
+Let text be "Hello, World! Welcome to Convo Programming."
+Let numbers be [1, 4, 9, 16, 25]
+
+Say "Built-in Functions Demo"
+Say "======================="
+
+Say ""
+Say "String Functions:"
+Say "Original text: " + text
+Say "Uppercase: " + upper(text)
+Say "Lowercase: " + lower(text)
+Say "Length: " + length(text)
+
+Let words be split(text, " ")
+Say "Split into words: " + to_text(words)
+Say "Number of words: " + length(words)
+
+Let joined be join(words, "-")
+Say "Joined with dashes: " + joined
+
+Let replaced be replace(text, "World", "Convo")
+Say "Replaced 'World' with 'Convo': " + replaced
+
+If starts_with(text, "Hello") then:
+    Say "Text starts with 'Hello'"
+
+If ends_with(text, "Programming.") then:
+    Say "Text ends with 'Programming.'"
+
+Say ""
+Say "Math Functions:"
+For each num in numbers do:
+    Let square_root be sqrt(num)
+    Say "sqrt(" + num + ") = " + square_root
+
+Let negative_number be -42
+Say "abs(" + negative_number + ") = " + abs(negative_number)
+
+Let base be 2
+Let exponent be 8
+Let result be power(base, exponent)
+Say base + " to the power of " + exponent + " = " + result
+
+Let decimal be 3.7826
+Say "Original: " + decimal
+Say "Rounded: " + round(decimal, 2)
+Say "Floor: " + floor(decimal)
+Say "Ceiling: " + ceiling(decimal)
+
+Say ""
+Say "Random Functions:"
+Let random_num be random()
+Say "Random number (0-1): " + random_num
+
+Let dice_roll be random_int(1, 6)
+Say "Dice roll (1-6): " + dice_roll
+
+Let lottery_numbers be []
+Let count be 1
+While count less than 6 do:
+    Let lucky_number be random_int(1, 50)
+    Call append with lottery_numbers, lucky_number
+    Let count be count + 1
+
+Say "Lucky lottery numbers: " + to_text(lottery_numbers)
+
+Say ""
+Say "Type Conversion Functions:"
+Let number_text be "123.45"
+Let converted_number be to_number(number_text)
+Say "Converted '" + number_text + "' to number: " + converted_number
+
+Let number_value be 42
+Let converted_text be to_text(number_value)
+Say "Converted " + number_value + " to text: '" + converted_text + "'"
+
+Let string_to_list be to_list("hello")
+Say "Converted 'hello' to list: " + to_text(string_to_list)
+
+Say ""
+Say "Collection Functions:"
+Let fruits be ["apple", "banana", "cherry"]
+Say "Fruits: " + to_text(fruits)
+Say "Contains 'banana': " + contains(fruits, "banana")
+Say "Contains 'grape': " + contains(fruits, "grape")
+
+Call append with fruits, "date"
+Say "After adding 'date': " + to_text(fruits)
+
+Call remove with fruits, "banana"
+Say "After removing 'banana': " + to_text(fruits)

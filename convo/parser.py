@@ -83,6 +83,20 @@ class Parser:
             return self.parse_if_statement()
         elif self.match(TokenType.WHILE):
             return self.parse_while_statement()
+        elif self.match(TokenType.FOR):
+            return self.parse_for_statement()
+        elif self.match(TokenType.TRY):
+            return self.parse_try_statement()
+        elif self.match(TokenType.THROW):
+            return self.parse_throw_statement()
+        elif self.match(TokenType.RETURN):
+            return self.parse_return_statement()
+        elif self.match(TokenType.BREAK):
+            return self.parse_break_statement()
+        elif self.match(TokenType.CONTINUE):
+            return self.parse_continue_statement()
+        elif self.match(TokenType.IMPORT):
+            return self.parse_import_statement()
         elif self.match(TokenType.NEWLINE):
             self.advance()
             return None
@@ -96,8 +110,19 @@ class Parser:
         return SayStatement(expression)
     
     def parse_let_statement(self) -> LetStatement:
-        """Parse: Let <identifier> be <expression>"""
+        """Parse: Let <identifier> be <expression> or Let this.<property> be <expression>"""
         self.consume(TokenType.LET)
+        
+        # Handle object property assignment (this.property)
+        if self.match(TokenType.IDENTIFIER) and self.current_token.value == "this":
+            self.advance()
+            self.consume(TokenType.DOT)
+            property_name = self.consume(TokenType.IDENTIFIER).value
+            self.consume(TokenType.BE)
+            value = self.parse_expression()
+            return ObjectPropertyAssignment("this", property_name, value)
+        
+        # Regular variable assignment
         name_token = self.consume(TokenType.IDENTIFIER)
         self.consume(TokenType.BE)
         value = self.parse_expression()
@@ -130,25 +155,50 @@ class Parser:
         else:
             self.error("Expected indented block after function definition")
         
-        return FunctionDefinition(name_token.value, parameters, body)
+        # Check if this is a class definition (first character is uppercase)
+        if name_token.value[0].isupper():
+            return ClassDefinition(name_token.value, parameters, body)
+        else:
+            return FunctionDefinition(name_token.value, parameters, body)
     
     def parse_call_statement(self) -> CallStatement:
-        """Parse: Call <function_name> with <arg1>, <arg2>"""
+        """Parse: Call <function_name> with <arg1>, <arg2> or Call <object>.<method> with <args>"""
         self.consume(TokenType.CALL)
-        name_token = self.consume(TokenType.IDENTIFIER)
         
-        arguments = []
-        if self.match(TokenType.WITH):
+        # Parse object.method or function_name
+        name = self.consume(TokenType.IDENTIFIER).value
+        
+        # Check for method call (object.method)
+        if self.match(TokenType.DOT):
             self.advance()
-            # Parse argument list
-            arguments.append(self.parse_expression())
+            method_name = self.consume(TokenType.IDENTIFIER).value
             
-            while self.match(TokenType.COMMA):
+            arguments = []
+            if self.match(TokenType.WITH):
                 self.advance()
+                # Parse argument list
                 arguments.append(self.parse_expression())
-        
-        function_call = FunctionCall(name_token.value, arguments)
-        return CallStatement(function_call)
+                
+                while self.match(TokenType.COMMA):
+                    self.advance()
+                    arguments.append(self.parse_expression())
+            
+            method_call = MethodCall(name, method_name, arguments)
+            return CallStatement(method_call)
+        else:
+            # Regular function call
+            arguments = []
+            if self.match(TokenType.WITH):
+                self.advance()
+                # Parse argument list
+                arguments.append(self.parse_expression())
+                
+                while self.match(TokenType.COMMA):
+                    self.advance()
+                    arguments.append(self.parse_expression())
+            
+            function_call = FunctionCall(name, arguments)
+            return CallStatement(function_call)
     
     def parse_if_statement(self) -> IfStatement:
         """Parse: If <condition> then: <body> [else: <else_body>]"""
@@ -193,6 +243,80 @@ class Parser:
             self.error("Expected indented block after 'do:'")
         
         return WhileStatement(condition, body)
+    
+    def parse_for_statement(self) -> ForStatement:
+        """Parse: For each <variable> in <collection> do: <body>"""
+        self.consume(TokenType.FOR)
+        self.consume(TokenType.EACH)
+        variable = self.consume(TokenType.IDENTIFIER).value
+        self.consume(TokenType.IN)
+        collection = self.parse_expression()
+        self.consume(TokenType.DO)
+        self.consume(TokenType.COLON)
+        self.skip_newlines()
+        
+        # Parse body
+        if self.match(TokenType.INDENT):
+            body = self.parse_block()
+        else:
+            self.error("Expected indented block after 'do:'")
+        
+        return ForStatement(variable, collection, body)
+    
+    def parse_try_statement(self) -> TryStatement:
+        """Parse: Try: <body> Catch <variable>: <catch_body>"""
+        self.consume(TokenType.TRY)
+        self.consume(TokenType.COLON)
+        self.skip_newlines()
+        
+        # Parse try block
+        if self.match(TokenType.INDENT):
+            try_block = self.parse_block()
+        else:
+            self.error("Expected indented block after 'try:'")
+        
+        # Parse catch block
+        self.consume(TokenType.CATCH)
+        error_var = self.consume(TokenType.IDENTIFIER).value
+        self.consume(TokenType.COLON)
+        self.skip_newlines()
+        
+        if self.match(TokenType.INDENT):
+            catch_block = self.parse_block()
+        else:
+            self.error("Expected indented block after 'catch:'")
+        
+        return TryStatement(try_block, error_var, catch_block)
+    
+    def parse_throw_statement(self) -> ThrowStatement:
+        """Parse: Throw <expression>"""
+        self.consume(TokenType.THROW)
+        expression = self.parse_expression()
+        return ThrowStatement(expression)
+    
+    def parse_return_statement(self) -> ReturnStatement:
+        """Parse: Return [expression]"""
+        self.consume(TokenType.RETURN)
+        expression = None
+        if not self.match(TokenType.NEWLINE, TokenType.DEDENT, TokenType.EOF):
+            expression = self.parse_expression()
+        return ReturnStatement(expression)
+    
+    def parse_break_statement(self) -> BreakStatement:
+        """Parse: Break"""
+        self.consume(TokenType.BREAK)
+        return BreakStatement()
+    
+    def parse_continue_statement(self) -> ContinueStatement:
+        """Parse: Continue"""
+        self.consume(TokenType.CONTINUE)
+        return ContinueStatement()
+    
+    def parse_import_statement(self) -> ImportStatement:
+        """Parse: Import <module_name>"""
+        self.consume(TokenType.IMPORT)
+        module_name = self.consume(TokenType.IDENTIFIER).value
+        return ImportStatement(module_name)
     
     def parse_block(self) -> List[Statement]:
         """Parse an indented block of statements"""
@@ -300,24 +424,154 @@ class Parser:
         return self.parse_primary_expression()
     
     def parse_primary_expression(self) -> Expression:
-        """Parse primary expressions (literals, identifiers, function calls, parentheses)"""
+        """Parse primary expressions (literals, identifiers, function calls, parentheses, lists, dicts, etc.)"""
+        # Handle string and number literals
         if self.match(TokenType.STRING, TokenType.NUMBER):
             value = self.current_token.value
             self.advance()
             return Literal(value)
         
-        if self.match(TokenType.IDENTIFIER):
-            name = self.current_token.value
-            self.advance()
-            return Identifier(name)
+        # Handle list literals [1, 2, 3]
+        if self.match(TokenType.LBRACKET):
+            return self.parse_list_literal()
         
+        # Handle dictionary literals {"key": "value"}
+        if self.match(TokenType.LBRACE):
+            return self.parse_dictionary_literal()
+        
+        # Handle object instantiation (new ClassName with args)
+        if self.match(TokenType.NEW):
+            return self.parse_object_instantiation()
+        
+        # Handle identifiers, property access, method calls
+        if self.match(TokenType.IDENTIFIER):
+            expr = self.parse_identifier_expression()
+            
+            # Handle chained property access and method calls
+            while self.match(TokenType.DOT):
+                self.advance()
+                property_name = self.consume(TokenType.IDENTIFIER).value
+                
+                # Check if it's a method call
+                if self.match(TokenType.LPAREN):
+                    self.advance()  # consume '('
+                    arguments = []
+                    
+                    if not self.match(TokenType.RPAREN):
+                        arguments.append(self.parse_expression())
+                        while self.match(TokenType.COMMA):
+                            self.advance()
+                            arguments.append(self.parse_expression())
+                    
+                    self.consume(TokenType.RPAREN)
+                    if isinstance(expr, Identifier):
+                        expr = MethodCall(expr.name, property_name, arguments)
+                    else:
+                        expr = MethodCall(str(expr), property_name, arguments)
+                else:
+                    # Property access
+                    expr = PropertyAccess(expr, property_name)
+            
+            # Handle array/dictionary indexing
+            while self.match(TokenType.LBRACKET):
+                self.advance()
+                index = self.parse_expression()
+                self.consume(TokenType.RBRACKET)
+                expr = IndexAccess(expr, index)
+            
+            return expr
+        
+        # Handle parenthesized expressions
         if self.match(TokenType.LPAREN):
             self.advance()  # consume '('
             expr = self.parse_expression()
             self.consume(TokenType.RPAREN, "Expected ')' after expression")
             return expr
         
+        # Handle special literals
+        if self.match(TokenType.IDENTIFIER):
+            if self.current_token.value in ["null", "true", "false"]:
+                value = self.current_token.value
+                self.advance()
+                return Literal(value)
+        
         self.error(f"Unexpected token in expression: {self.current_token.value}")
+    
+    def parse_list_literal(self) -> ListLiteral:
+        """Parse [element1, element2, ...]"""
+        self.consume(TokenType.LBRACKET)
+        elements = []
+        
+        if not self.match(TokenType.RBRACKET):
+            elements.append(self.parse_expression())
+            while self.match(TokenType.COMMA):
+                self.advance()
+                if self.match(TokenType.RBRACKET):  # Allow trailing comma
+                    break
+                elements.append(self.parse_expression())
+        
+        self.consume(TokenType.RBRACKET)
+        return ListLiteral(elements)
+    
+    def parse_dictionary_literal(self) -> DictionaryLiteral:
+        """Parse {"key": value, "key2": value2}"""
+        self.consume(TokenType.LBRACE)
+        pairs = []
+        
+        if not self.match(TokenType.RBRACE):
+            # Parse first key-value pair
+            key = self.parse_expression()
+            self.consume(TokenType.COLON)
+            value = self.parse_expression()
+            pairs.append((key, value))
+            
+            while self.match(TokenType.COMMA):
+                self.advance()
+                if self.match(TokenType.RBRACE):  # Allow trailing comma
+                    break
+                key = self.parse_expression()
+                self.consume(TokenType.COLON)
+                value = self.parse_expression()
+                pairs.append((key, value))
+        
+        self.consume(TokenType.RBRACE)
+        return DictionaryLiteral(pairs)
+    
+    def parse_object_instantiation(self) -> ObjectInstantiation:
+        """Parse: new ClassName with arg1, arg2"""
+        self.consume(TokenType.NEW)
+        class_name = self.consume(TokenType.IDENTIFIER).value
+        
+        arguments = []
+        if self.match(TokenType.WITH):
+            self.advance()
+            arguments.append(self.parse_expression())
+            while self.match(TokenType.COMMA):
+                self.advance()
+                arguments.append(self.parse_expression())
+        
+        return ObjectInstantiation(class_name, arguments)
+    
+    def parse_identifier_expression(self) -> Expression:
+        """Parse identifier that might be a function call"""
+        name = self.current_token.value
+        self.advance()
+        
+        # Check for function call with parentheses
+        if self.match(TokenType.LPAREN):
+            self.advance()  # consume '('
+            arguments = []
+            
+            if not self.match(TokenType.RPAREN):
+                arguments.append(self.parse_expression())
+                while self.match(TokenType.COMMA):
+                    self.advance()
+                    arguments.append(self.parse_expression())
+            
+            self.consume(TokenType.RPAREN)
+            return FunctionCall(name, arguments)
+        
+        return Identifier(name)
 
 def parse_convo(text: str) -> Program:
     """Convenience function to parse Convo source code"""

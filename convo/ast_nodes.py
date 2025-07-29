@@ -57,6 +57,61 @@ class FunctionCall(Expression):
     def __repr__(self):
         return f"FunctionCall({self.name!r}, {self.arguments!r})"
 
+class MethodCall(Expression):
+    def __init__(self, object_name: str, method_name: str, arguments: List[Expression]):
+        self.object_name = object_name
+        self.method_name = method_name
+        self.arguments = arguments
+    
+    def __repr__(self):
+        return f"MethodCall({self.object_name!r}, {self.method_name!r}, {self.arguments!r})"
+
+class ListLiteral(Expression):
+    def __init__(self, elements: List[Expression]):
+        self.elements = elements
+    
+    def __repr__(self):
+        return f"ListLiteral({self.elements!r})"
+
+class DictionaryLiteral(Expression):
+    def __init__(self, pairs: List[tuple]):
+        self.pairs = pairs  # List of (key, value) tuples
+    
+    def __repr__(self):
+        return f"DictionaryLiteral({self.pairs!r})"
+
+class IndexAccess(Expression):
+    def __init__(self, object: Expression, index: Expression):
+        self.object = object
+        self.index = index
+    
+    def __repr__(self):
+        return f"IndexAccess({self.object!r}, {self.index!r})"
+
+class PropertyAccess(Expression):
+    def __init__(self, object: Expression, property_name: str):
+        self.object = object
+        self.property_name = property_name
+    
+    def __repr__(self):
+        return f"PropertyAccess({self.object!r}, {self.property_name!r})"
+
+class ObjectInstantiation(Expression):
+    def __init__(self, class_name: str, arguments: List[Expression]):
+        self.class_name = class_name
+        self.arguments = arguments
+    
+    def __repr__(self):
+        return f"ObjectInstantiation({self.class_name!r}, {self.arguments!r})"
+
+class AttributeAccess(Expression):
+    def __init__(self, object: Expression, attribute: str):
+        self.object = object
+        self.attribute = attribute
+    
+    def __repr__(self):
+        return f"AttributeAccess({self.object!r}, {self.attribute!r})"
+
 # Statements
 class SayStatement(Statement):
     def __init__(self, expression: Expression):
@@ -105,6 +160,72 @@ class WhileStatement(Statement):
     
     def __repr__(self):
         return f"WhileStatement({self.condition!r}, {self.body!r})"
+
+class ForStatement(Statement):
+    def __init__(self, variable: str, iterable: Expression, body: List[Statement]):
+        self.variable = variable
+        self.iterable = iterable
+        self.body = body
+    
+    def __repr__(self):
+        return f"ForStatement({self.variable!r}, {self.iterable!r}, {self.body!r})"
+
+class BreakStatement(Statement):
+    def __repr__(self):
+        return "BreakStatement()"
+
+class ContinueStatement(Statement):
+    def __repr__(self):
+        return "ContinueStatement()"
+
+class ReturnStatement(Statement):
+    def __init__(self, value: Optional[Expression] = None):
+        self.value = value
+    
+    def __repr__(self):
+        return f"ReturnStatement({self.value!r})"
+
+class TryStatement(Statement):
+    def __init__(self, try_block: List[Statement], catch_block: List[Statement], exception_var: Optional[str] = None):
+        self.try_block = try_block
+        self.catch_block = catch_block
+        self.exception_var = exception_var
+    
+    def __repr__(self):
+        return f"TryStatement({self.try_block!r}, {self.catch_block!r}, {self.exception_var!r})"
+
+class ThrowStatement(Statement):
+    def __init__(self, expression: Expression):
+        self.expression = expression
+    
+    def __repr__(self):
+        return f"ThrowStatement({self.expression!r})"
+
+class ImportStatement(Statement):
+    def __init__(self, module_name: str, alias: Optional[str] = None):
+        self.module_name = module_name
+        self.alias = alias
+    
+    def __repr__(self):
+        return f"ImportStatement({self.module_name!r}, {self.alias!r})"
+
+class ObjectPropertyAssignment(Statement):
+    def __init__(self, object_name: str, property_name: str, value: 'Expression'):
+        self.object_name = object_name
+        self.property_name = property_name
+        self.value = value
+    
+    def __repr__(self):
+        return f"ObjectPropertyAssignment({self.object_name!r}, {self.property_name!r}, {self.value!r})"
+
+class ClassDefinition(Statement):
+    def __init__(self, name: str, constructor_params: List[str], body: List[Statement]):
+        self.name = name
+        self.constructor_params = constructor_params
+        self.body = body
+    
+    def __repr__(self):
+        return f"ClassDefinition({self.name!r}, {self.constructor_params!r}, {self.body!r})"
 
 class Block(Statement):
     def __init__(self, statements: List[Statement]):

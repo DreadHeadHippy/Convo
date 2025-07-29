@@ -1,0 +1,75 @@
+Let student be {
+    "name": "Alice Johnson",
+    "age": 20,
+    "grade": "A",
+    "subjects": ["Math", "Science", "History"]
+}
+
+Let inventory be {
+    "apples": 50,
+    "bananas": 30,
+    "oranges": 25
+}
+
+Say "Working with Dictionaries in Convo!"
+Say "===================================="
+
+Say "Student info:"
+Say "Name: " + student["name"]
+Say "Age: " + student["age"]
+Say "Grade: " + student["grade"]
+
+Say ""
+Say "Student subjects:"
+For each subject in student["subjects"] do:
+    Say "- " + subject
+
+Say ""
+Say "Store inventory:"
+Let all_keys be keys(inventory)
+For each item in all_keys do:
+    Let quantity be inventory[item]
+    Say item + ": " + quantity + " units"
+
+Say ""
+Say "Dictionary operations:"
+Let inventory["grapes"] be 40
+Say "Added grapes to inventory"
+
+Let total_items be 0
+Let all_values be values(inventory)
+For each quantity in all_values do:
+    Let total_items be total_items + quantity
+
+Say "Total items in inventory: " + total_items
+
+Say ""
+Say "Checking dictionary contents:"
+If contains(inventory, "apples") then:
+    Say "We have apples in stock: " + inventory["apples"]
+
+If contains(student, "graduation_year") then:
+    Say "Graduation year: " + student["graduation_year"]
+Else:
+    Say "Graduation year not specified"
+
+Say ""
+Say "Nested dictionary access:"
+Let school_data be {
+    "students": {
+        "alice": {"grade": "A", "subjects": 3},
+        "bob": {"grade": "B", "subjects": 4}
+    },
+    "teachers": ["Ms. Smith", "Mr. Johnson"]
+}
+
+Say "Alice's grade: " + school_data["students"]["alice"]["grade"]
+Say "Number of teachers: " + length(school_data["teachers"])
+
+Say ""
+Say "All dictionary keys and values:"
+Let student_keys be keys(student)
+Say "Student data keys: " + to_text(student_keys)
+
+Let student_values be values(student)
+Say "Student data has " + length(student_values) + " values"

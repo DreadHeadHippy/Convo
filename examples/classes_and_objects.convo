@@ -1,0 +1,127 @@
+Define Student with name, age, grades:
+    Let this.name be name
+    Let this.age be age
+    Let this.grades be grades
+    
+    Define get_average:
+        If length(this.grades) equals 0 then:
+            Return 0
+        
+        Let total be 0
+        For each grade in this.grades do:
+            Let total be total + grade
+        
+        Return total / length(this.grades)
+    
+    Define add_grade with grade:
+        Call append with this.grades, grade
+    
+    Define get_letter_grade:
+        Let average be this.get_average()
+        
+        If average greater than 90 then:
+            Return "A"
+        If average greater than 80 then:
+            Return "B"
+        If average greater than 70 then:
+            Return "C"
+        If average greater than 60 then:
+            Return "D"
+        Return "F"
+    
+    Define to_string:
+        Let avg be this.get_average()
+        Let letter be this.get_letter_grade()
+        Return this.name + " (Age: " + this.age + ", Average: " + round(avg, 2) + ", Grade: " + letter + ")"
+
+Define School with name:
+    Let this.name be name
+    Let this.students be []
+    
+    Define add_student with student:
+        Call append with this.students, student
+    
+    Define get_student with name:
+        For each student in this.students do:
+            If student.name equals name then:
+                Return student
+        Return null
+    
+    Define get_class_average:
+        If length(this.students) equals 0 then:
+            Return 0
+        
+        Let total be 0
+        For each student in this.students do:
+            Let total be total + student.get_average()
+        
+        Return total / length(this.students)
+    
+    Define get_honor_roll:
+        Let honor_students be []
+        For each student in this.students do:
+            If student.get_average() greater than 85 then:
+                Call append with honor_students, student
+        Return honor_students
+    
+    Define print_report:
+        Say "=== " + this.name + " Report ==="
+        Say "Total Students: " + length(this.students)
+        Say "Class Average: " + round(this.get_class_average(), 2)
+        Say ""
+        
+        Say "All Students:"
+        For each student in this.students do:
+            Say "- " + student.to_string()
+        
+        Say ""
+        Let honor_students be this.get_honor_roll()
+        Say "Honor Roll (" + length(honor_students) + " students):"
+        For each student in honor_students do:
+            Say "* " + student.name + " - " + round(student.get_average(), 2)
+
+Say "Object-Oriented Programming Demo"
+Say "================================"
+
+Say ""
+Say "Creating a school..."
+Let school be new School with "Lincoln High School"
+
+Say "Creating students..."
+Let alice be new Student with "Alice Johnson", 16, [95, 87, 92, 88]
+Let bob be new Student with "Bob Smith", 17, [78, 82, 75, 80]
+Let charlie be new Student with "Charlie Brown", 16, [90, 94, 88, 91]
+Let diana be new Student with "Diana Wilson", 17, [65, 70, 68, 72]
+
+Say "Adding students to school..."
+Call school.add_student with alice
+Call school.add_student with bob
+Call school.add_student with charlie
+Call school.add_student with diana
+
+Say ""
+Say "Adding new grades..."
+Call alice.add_grade with 96
+Call bob.add_grade with 85
+Call charlie.add_grade with 93
+Call diana.add_grade with 74
+
+Say ""
+Say "Individual student information:"
+Say alice.to_string()
+Say bob.to_string()
+Say charlie.to_string()
+Say diana.to_string()
+
+Say ""
+Say "Looking up a specific student:"
+Let found_student be school.get_student("Bob Smith")
+If found_student not equals null then:
+    Say "Found: " + found_student.to_string()
+
+Say ""
+Say "Generating school report:"
+Call school.print_report
+
+Say ""
+Say "Class completed successfully!"
