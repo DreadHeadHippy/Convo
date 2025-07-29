@@ -2,16 +2,21 @@
 *.convo linguist-language=Convo
 *.convo linguist-detectable=true
 
-# Mark Python interpreter as vendored/infrastructure
+# Mark Python implementation as vendored (not counted in language stats)
 convo/*.py linguist-vendored=true
 main.py linguist-vendored=true
 tests/*.py linguist-vendored=true
+prove_convo_language.py linguist-vendored=true
+release.py linguist-vendored=true
 
-# Make sure Convo examples are counted as main content
+# Ensure Convo examples are the main language content
 examples/*.convo linguist-detectable=true
 examples/*.convo linguist-documentation=false
 
-# Don't count config files
+# Mark documentation and config as vendored
+*.md linguist-documentation=true
 .vscode/* linguist-vendored=true
-requirements.txt linguist-vendored=true
+.github/* linguist-vendored=true
+requirements*.txt linguist-vendored=true
 .gitignore linguist-vendored=true
+LICENSE linguist-vendored=true

@@ -1,0 +1,11 @@
+name: Convo
+type: programming
+color: "#6366f1"
+extensions:
+- ".convo"
+tm_scope: source.convo
+ace_mode: text
+language_id: 999999999
+aliases:
+- "convo"
+- "Convo Language"
