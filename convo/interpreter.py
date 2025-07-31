@@ -574,12 +574,16 @@ class Interpreter:
             return "false"
         elif isinstance(value, str):
             return value
+        elif isinstance(value, float):
+            # Output whole-number floats as integers
+            if value.is_integer():
+                return str(int(value))
+            else:
+                return str(value)
         elif isinstance(value, list):
-            # Convert list to string representation
             elements = [self.stringify(item) for item in value]
             return "[" + ", ".join(elements) + "]"
         elif isinstance(value, dict):
-            # Convert dict to string representation
             pairs = [f'"{k}": {self.stringify(v)}' for k, v in value.items()]
             return "{" + ", ".join(pairs) + "}"
         else:

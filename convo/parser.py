@@ -15,8 +15,12 @@ class Parser:
     
     def error(self, message: str):
         if self.current_token:
-            raise SyntaxError(f"Line {self.current_token.line}, Column {self.current_token.column}: {message}")
+            token_info = f"Type: {self.current_token.type}, Value: {self.current_token.value}"
+            raise SyntaxError(f"Line {self.current_token.line}, Column {self.current_token.column}: {message} | Token: {token_info}")
         else:
+            print("DEBUG: Token stream:")
+            for t in self.tokens:
+                print(f"  {t}")
             raise SyntaxError(f"Unexpected end of input: {message}")
     
     def advance(self):
@@ -58,15 +62,26 @@ class Parser:
     
     def parse(self) -> Program:
         """Parse the tokens into a Program AST node"""
+        print("DEBUG: Token stream before parsing:")
+        for t in self.tokens:
+            print(f"  {t}")
         statements = []
         self.skip_newlines()
-        
+        # Skip leading INDENT tokens
+        while self.match(TokenType.INDENT):
+            self.advance()
         while self.current_token and not self.match(TokenType.EOF):
+            # Skip trailing DEDENT tokens before EOF
+            while self.match(TokenType.DEDENT):
+                self.advance()
+            if self.match(TokenType.EOF):
+                break
             stmt = self.parse_statement()
             if stmt:
                 statements.append(stmt)
             self.skip_newlines()
-        
+            while self.match(TokenType.INDENT):
+                self.advance()
         return Program(statements)
     
     def parse_statement(self) -> Optional[Statement]:
@@ -101,7 +116,8 @@ class Parser:
             self.advance()
             return None
         else:
-            self.error(f"Unexpected token: {self.current_token.value}")
+            token_val = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            self.error(f"Unexpected token: {token_val}")
     
     def parse_say_statement(self) -> SayStatement:
         """Parse: Say <expression>"""
@@ -114,10 +130,13 @@ class Parser:
         self.consume(TokenType.LET)
         
         # Handle object property assignment (this.property)
-        if self.match(TokenType.IDENTIFIER) and self.current_token.value == "this":
+        if self.match(TokenType.IDENTIFIER) and self.current_token and hasattr(self.current_token, 'value') and self.current_token.value == "this":
             self.advance()
             self.consume(TokenType.DOT)
-            property_name = self.consume(TokenType.IDENTIFIER).value
+            property_token = self.consume(TokenType.IDENTIFIER)
+            if not property_token or not hasattr(property_token, 'value'):
+                self.error("Expected property name after 'this.'")
+            property_name = property_token.value
             self.consume(TokenType.BE)
             value = self.parse_expression()
             return ObjectPropertyAssignment("this", property_name, value)
@@ -126,7 +145,10 @@ class Parser:
         name_token = self.consume(TokenType.IDENTIFIER)
         self.consume(TokenType.BE)
         value = self.parse_expression()
-        return LetStatement(name_token.value, value)
+        if not name_token or not hasattr(name_token, 'value'):
+            self.error("Expected variable name after 'Let'")
+        name_val = name_token.value
+        return LetStatement(name_val, value)
     
     def parse_function_definition(self) -> FunctionDefinition:
         """Parse: Define <name> with <param1>, <param2>: <body>"""
@@ -138,13 +160,15 @@ class Parser:
             self.advance()
             # Parse parameter list
             if self.match(TokenType.IDENTIFIER):
-                parameters.append(self.current_token.value)
+                if self.current_token and hasattr(self.current_token, 'value'):
+                    if self.current_token and hasattr(self.current_token, 'value'):
+                        parameters.append(self.current_token.value)
                 self.advance()
                 
                 while self.match(TokenType.COMMA):
                     self.advance()
                     param_token = self.consume(TokenType.IDENTIFIER)
-                    parameters.append(param_token.value)
+                    parameters.append(param_token.value if param_token and hasattr(param_token, 'value') else None)
         
         self.consume(TokenType.COLON)
         self.skip_newlines()
@@ -156,6 +180,8 @@ class Parser:
             self.error("Expected indented block after function definition")
         
         # Check if this is a class definition (first character is uppercase)
+        if not name_token or not hasattr(name_token, 'value'):
+            self.error("Expected function or class name after 'Define'")
         if name_token.value[0].isupper():
             return ClassDefinition(name_token.value, parameters, body)
         else:
@@ -166,12 +192,18 @@ class Parser:
         self.consume(TokenType.CALL)
         
         # Parse object.method or function_name
-        name = self.consume(TokenType.IDENTIFIER).value
+        name_token = self.consume(TokenType.IDENTIFIER)
+        if not name_token or not hasattr(name_token, 'value'):
+            self.error("Expected function or object name after 'Call'")
+        name = name_token.value
         
         # Check for method call (object.method)
         if self.match(TokenType.DOT):
             self.advance()
-            method_name = self.consume(TokenType.IDENTIFIER).value
+            method_token = self.consume(TokenType.IDENTIFIER)
+            if not method_token or not hasattr(method_token, 'value'):
+                self.error("Expected method name after '.' in call statement")
+            method_name = method_token.value
             
             arguments = []
             if self.match(TokenType.WITH):
@@ -184,7 +216,9 @@ class Parser:
                     arguments.append(self.parse_expression())
             
             method_call = MethodCall(name, method_name, arguments)
-            return CallStatement(method_call)
+            # Wrap MethodCall in a FunctionCall for CallStatement
+            function_call = FunctionCall(f"{name}.{method_name}", arguments)
+            return CallStatement(function_call)
         else:
             # Regular function call
             arguments = []
@@ -286,7 +320,7 @@ class Parser:
         else:
             self.error("Expected indented block after 'catch:'")
         
-        return TryStatement(try_block, error_var, catch_block)
+        return TryStatement(try_block, catch_block, error_var)
     
     def parse_throw_statement(self) -> ThrowStatement:
         """Parse: Throw <expression>"""
@@ -343,7 +377,9 @@ class Parser:
         expr = self.parse_and_expression()
         
         while self.match(TokenType.OR):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             right = self.parse_and_expression()
             expr = BinaryOp(expr, operator, right)
@@ -355,7 +391,9 @@ class Parser:
         expr = self.parse_equality_expression()
         
         while self.match(TokenType.AND):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             right = self.parse_equality_expression()
             expr = BinaryOp(expr, operator, right)
@@ -367,7 +405,9 @@ class Parser:
         expr = self.parse_comparison_expression()
         
         while self.match(TokenType.EQUALS, TokenType.NOT_EQUALS):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             right = self.parse_comparison_expression()
             expr = BinaryOp(expr, operator, right)
@@ -379,10 +419,12 @@ class Parser:
         expr = self.parse_additive_expression()
         
         while self.match(TokenType.GREATER, TokenType.LESS):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             # Handle "than" keyword after greater/less
-            if self.match(TokenType.IDENTIFIER) and self.current_token.value == "than":
+            if self.match(TokenType.IDENTIFIER) and self.current_token and hasattr(self.current_token, 'value') and self.current_token.value == "than":
                 self.advance()
             right = self.parse_additive_expression()
             expr = BinaryOp(expr, operator, right)
@@ -394,7 +436,9 @@ class Parser:
         expr = self.parse_multiplicative_expression()
         
         while self.match(TokenType.PLUS, TokenType.MINUS):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             right = self.parse_multiplicative_expression()
             expr = BinaryOp(expr, operator, right)
@@ -406,7 +450,9 @@ class Parser:
         expr = self.parse_unary_expression()
         
         while self.match(TokenType.MULTIPLY, TokenType.DIVIDE):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             right = self.parse_unary_expression()
             expr = BinaryOp(expr, operator, right)
@@ -416,7 +462,9 @@ class Parser:
     def parse_unary_expression(self) -> Expression:
         """Parse unary expressions (not, -, +)"""
         if self.match(TokenType.NOT, TokenType.MINUS, TokenType.PLUS):
-            operator = self.current_token.value
+            operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if operator is None:
+                self.error("Expected operator in expression")
             self.advance()
             operand = self.parse_unary_expression()
             return UnaryOp(operator, operand)
@@ -427,7 +475,9 @@ class Parser:
         """Parse primary expressions (literals, identifiers, function calls, parentheses, lists, dicts, etc.)"""
         # Handle string and number literals
         if self.match(TokenType.STRING, TokenType.NUMBER):
-            value = self.current_token.value
+            value = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+            if value is None:
+                self.error("Expected value in expression")
             self.advance()
             return Literal(value)
         
@@ -490,12 +540,13 @@ class Parser:
         
         # Handle special literals
         if self.match(TokenType.IDENTIFIER):
-            if self.current_token.value in ["null", "true", "false"]:
+            if self.current_token and hasattr(self.current_token, 'value') and self.current_token.value in ["null", "true", "false"]:
                 value = self.current_token.value
                 self.advance()
                 return Literal(value)
         
-        self.error(f"Unexpected token in expression: {self.current_token.value}")
+        token_val = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+        self.error(f"Unexpected token in expression: {token_val}")
     
     def parse_list_literal(self) -> ListLiteral:
         """Parse [element1, element2, ...]"""
@@ -554,7 +605,9 @@ class Parser:
     
     def parse_identifier_expression(self) -> Expression:
         """Parse identifier that might be a function call"""
-        name = self.current_token.value
+        name = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+        if name is None:
+            self.error("Expected name in expression")
         self.advance()
         
         # Check for function call with parentheses

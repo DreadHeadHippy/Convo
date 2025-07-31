@@ -240,7 +240,11 @@ class Lexer:
             if at_line_start:
                 self.handle_indentation()
                 at_line_start = False
-                if self.peek() == '\n':
+                # Skip blank lines (indent followed by newline)
+                while self.peek() == '\n':
+                    self.advance()
+                    at_line_start = True
+                if at_line_start:
                     continue
             
             char = self.peek()
@@ -250,6 +254,9 @@ class Lexer:
                 self.advance()
                 at_line_start = True
                 continue
+            # Skip trailing whitespace at end of file
+            if char is None:
+                break
             
             if char and char in ' \t':
                 self.skip_whitespace()
@@ -273,9 +280,14 @@ class Lexer:
                 continue
             
             if char and (char.isalpha() or char == '_'):
-                value = self.read_identifier().lower()
-                token_type = keywords.get(value, TokenType.IDENTIFIER)
-                self.tokens.append(Token(token_type, value, self.line, self.column))
+                raw_value = self.read_identifier()
+                keyword_value = raw_value.lower()
+                token_type = keywords.get(keyword_value, TokenType.IDENTIFIER)
+                # Use original casing for identifiers, lowercase for keywords
+                if token_type == TokenType.IDENTIFIER:
+                    self.tokens.append(Token(token_type, raw_value, self.line, self.column))
+                else:
+                    self.tokens.append(Token(token_type, keyword_value, self.line, self.column))
                 continue
             
             # Single character tokens
