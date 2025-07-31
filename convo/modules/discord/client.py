@@ -1,12 +1,15 @@
 """
-Convo Discord Client
+Convo Discord Client (V0.0.1)
 A natural language Discord bot interface for Convo programs
+Version: V0.0.1
 """
 from typing import Callable, Optional
 import discord
 import asyncio
 
 class DiscordClient(discord.Client):
+    VERSION = "V0.0.1"
+
     def __init__(self, token: str, on_message: Optional[Callable] = None):
         super().__init__(intents=discord.Intents.default())
         self.token = token

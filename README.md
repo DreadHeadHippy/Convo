@@ -198,6 +198,15 @@ python -m pytest tests/ -v
 ### Quick Start
 ```convo
 # Create and configure a Discord bot
+
+# Convo Programming Language
+
+![Test Status](https://github.com/DreadHeadHippy/Convo/actions/workflows/python-app.yml/badge.svg)
+
+**Current Version:** V0.0.1
+
+---
+
 Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
 
 # Add message listeners
