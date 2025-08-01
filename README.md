@@ -158,7 +158,7 @@ Define bot_info with ctx:
 Call add_discord_command with "info", "Get bot info", bot_info
 
 # Start the bot
-Call start_discord_bot
+Call start_discord_bot 
 ```
 
 ## 🏗️ Project Structure
