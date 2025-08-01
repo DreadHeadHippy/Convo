@@ -191,9 +191,20 @@ python -m pytest tests/ -v
 - **Convo handles**: All Discord API complexity, async/await, error handling
 
 ### Setup
-1. Install Discord.py: `pip install discord.py`
-2. Get a bot token from Discord Developer Portal
-3. Replace `YOUR_BOT_TOKEN` in examples with your token
+To get started with Convo:
+1. Clone the repository: `git clone https://github.com/DreadHeadHippy/Convo.git`
+2. Change into the project directory: `cd Convo`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run your first Convo program as shown below.
+## 🔒 Security Best Practices
+
+Convo development should follow standard security procedures:
+
+- **Never commit secrets or sensitive information to source control.** Use environment variables or a `.env` file for configuration.
+- **Validate all user input** to prevent code injection and abuse.
+- **Keep dependencies up to date** and check for vulnerabilities (e.g., with `pip-audit`).
+- **Monitor and log application activity** for suspicious behavior.
+- **Report vulnerabilities** via the [SECURITY.md](SECURITY.md) file.
 
 ### Quick Start
 ```convo
