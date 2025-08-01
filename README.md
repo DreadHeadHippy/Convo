@@ -27,7 +27,7 @@ if user.age >= 18 and user.has_license:
 ```convo
 If age greater than 18 and has_license equals true then:
     Say "Can drive"
-    
+```
 ## ✨ Features
 
 - 🗣️ **Natural Language Syntax** - Write code that reads like English
