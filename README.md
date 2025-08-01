@@ -21,9 +21,9 @@ Convo is a **fully functional programming language** that reads like natural Eng
 - 🏗️ **Complete Architecture** - Lexer, parser, interpreter, and AST
 - 🎮 **Real Applications** - Build games, calculators, and interactive programs
 - 🤖 **Discord Bot Support** - Create Discord bots with natural language
-- 🐍 **Python-Based** - Built with Python for easy extension
-- 🧪 **Well Tested** - Comprehensive test suite (17 tests passing)
-- 🚀 **VS Code Support** - Syntax highlighting and debugging
+    - 🐍 **Python-Based** - Built with Python for easy extension
+    - 🧪 **Well Tested** - Comprehensive test suite (35 tests passing)
+    - 🚀 **VS Code Support** - Syntax highlighting and debugging
 - 💬 **Interactive REPL** - Test code interactively
 - 🔄 **Advanced Features** - Nested functions, scoping, error handling
 
