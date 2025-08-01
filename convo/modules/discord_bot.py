@@ -33,6 +33,8 @@ try:
     from discord.ext import commands
     DISCORD_AVAILABLE = True
 except ImportError:
+    discord = None
+    commands = None
     DISCORD_AVAILABLE = False
 
 @dataclass
