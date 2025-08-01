@@ -2,7 +2,7 @@
 
 **A natural programming language with conversational syntax**
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/DreadHeadHippy/Convo/tests.yml?branch=main&label=tests)](https://github.com/DreadHeadHippy/Convo/actions/workflows/tests.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/DreadHeadHippy/Convo/ci-tests-new.yml?branch=main&label=tests)](https://github.com/DreadHeadHippy/Convo/actions/workflows/ci-tests-new.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/DreadHeadHippy/Convo)](https://github.com/DreadHeadHippy/Convo/releases)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
