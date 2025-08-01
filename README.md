@@ -13,20 +13,6 @@
 
 Convo is a **fully functional programming language** that reads like natural English, making programming more accessible and intuitive. Instead of cryptic symbols and syntax, write code that anyone can understand.
 
-## ✨ Features
-
-- 🗣️ **Natural Language Syntax** - Write code that reads like English
-- 🎯 **Easy to Learn** - Perfect for beginners and education
-- 🔧 **Full Programming Language** - Variables, functions, control flow, loops
-- 🏗️ **Complete Architecture** - Lexer, parser, interpreter, and AST
-- 🎮 **Real Applications** - Build games, calculators, and interactive programs
-- 🤖 **Discord Bot Support** - Create Discord bots with natural language
-- 🐍 **Python-Based** - Built with Python for easy extension
-- 🧪 **Well Tested** - Comprehensive test suite (35 tests passing)
-- 🚀 **VS Code Support** - Syntax highlighting and debugging
-- 💬 **Interactive REPL** - Test code interactively
-- 🔄 **Advanced Features** - Nested functions, scoping, error handling
-
 ## 🎉 Why Convo?
 
 Most programming languages prioritize brevity and efficiency for experienced developers. Convo prioritizes **readability** and **accessibility**, making programming concepts clear to everyone.
@@ -41,9 +27,21 @@ if user.age >= 18 and user.has_license:
 ```convo
 If age greater than 18 and has_license equals true then:
     Say "Can drive"
-    ```
+    
+## ✨ Features
 
-    ---
+- 🗣️ **Natural Language Syntax** - Write code that reads like English
+- 🎯 **Easy to Learn** - Perfect for beginners and education
+- 🔧 **Full Programming Language** - Variables, functions, control flow, loops
+- 🏗️ **Complete Architecture** - Lexer, parser, interpreter, and AST
+- 🎮 **Real Applications** - Build games, calculators, and interactive programs
+- 🤖 **Discord Bot Support** - Create Discord bots with natural language
+- 🐍 **Python-Based** - Built with Python for easy extension
+- 🧪 **Well Tested** - Comprehensive test suite (35 tests passing)
+- 🚀 **VS Code Support** - Syntax highlighting and debugging
+- 💬 **Interactive REPL** - Test code interactively
+- 🔄 **Advanced Features** - Nested functions, scoping, error handling
+
 ## 🚀 Quick Start
 
 ### Installation
