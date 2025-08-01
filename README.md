@@ -224,9 +224,6 @@ python -m pytest tests/ -v
 - **Setup Guide** - Complete tutorial for Discord bot creation
 
 ## 🛠️ Development
-
-![Test Status](https://github.com/DreadHeadHippy/Convo/actions/workflows/ci-tests-new.yml/badge.svg)
-
 **Current Version:** V0.0.1
 
 ### Adding New Features
