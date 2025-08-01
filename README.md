@@ -31,8 +31,6 @@ Convo is a **fully functional programming language** that reads like natural Eng
 
 ### Installation
 
-<a href="https://ko-fi.com/dreadheadhippy" target="_blank"><img src="https://cdn.ko-fi.com/cdn/kofi5.png?v=3" height="36" alt="Buy Me a Coffee at ko-fi.com" /></a>
-
 ```bash
 git clone https://github.com/DreadHeadHippy/Convo.git
 cd Convo
@@ -294,6 +292,15 @@ if user.age >= 18 and user.has_license:
 If age greater than 18 and has_license equals true then:
     Say "Can drive"
 ```
+
+---
+
+
+## 💖 Support
+
+If you enjoy Convo or want to support its development, you can buy me a coffee:
+
+<a href="https://ko-fi.com/dreadheadhippy" target="_blank"><img src="https://cdn.ko-fi.com/cdn/kofi5.png?v=3" height="36" alt="Support on Ko-fi" /></a>
 
 ---
 
