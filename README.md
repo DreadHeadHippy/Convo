@@ -4,7 +4,7 @@
 
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/DreadHeadHippy/Convo/ci-tests-new.yml?branch=main&label=tests)](https://github.com/DreadHeadHippy/Convo/actions/workflows/ci-tests-new.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/DreadHeadHippy/Convo)](https://github.com/DreadHeadHippy/Convo/releases)
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://python.org)
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/DreadHeadHippy/Convo)](https://github.com/DreadHeadHippy/Convo/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/DreadHeadHippy/Convo)](https://github.com/DreadHeadHippy/Convo/network)
