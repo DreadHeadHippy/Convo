@@ -31,6 +31,8 @@ Convo is a **fully functional programming language** that reads like natural Eng
 
 ### Installation
 
+<a href="https://ko-fi.com/dreadheadhippy" target="_blank"><img src="https://cdn.ko-fi.com/cdn/kofi5.png?v=3" height="36" alt="Buy Me a Coffee at ko-fi.com" /></a>
+
 ```bash
 git clone https://github.com/DreadHeadHippy/Convo.git
 cd Convo
