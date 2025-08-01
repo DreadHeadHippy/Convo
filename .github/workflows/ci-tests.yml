@@ -41,4 +41,4 @@ jobs:
     
     - name: Test main entry point
       run: |
-        python main.py examples/hello_world.convo
+        python main.py examples/hello_world.convo 
