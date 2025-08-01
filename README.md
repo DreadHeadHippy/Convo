@@ -224,8 +224,6 @@ python -m pytest tests/ -v
 - **Setup Guide** - Complete tutorial for Discord bot creation
 
 ## 🛠️ Development
-**Current Version:** V0.0.1
-
 ### Adding New Features
 
 1. Add tokens to `lexer.py`
@@ -233,6 +231,7 @@ python -m pytest tests/ -v
 3. Add AST nodes in `ast_nodes.py`
 4. Implement execution in `interpreter.py`
 5. Write tests in `tests/`
+6. Add new libraries
 
 ## 🎯 Use Cases
 
