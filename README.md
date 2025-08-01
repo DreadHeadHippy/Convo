@@ -21,12 +21,29 @@ Convo is a **fully functional programming language** that reads like natural Eng
 - 🏗️ **Complete Architecture** - Lexer, parser, interpreter, and AST
 - 🎮 **Real Applications** - Build games, calculators, and interactive programs
 - 🤖 **Discord Bot Support** - Create Discord bots with natural language
-    - 🐍 **Python-Based** - Built with Python for easy extension
-    - 🧪 **Well Tested** - Comprehensive test suite (35 tests passing)
-    - 🚀 **VS Code Support** - Syntax highlighting and debugging
+- 🐍 **Python-Based** - Built with Python for easy extension
+- 🧪 **Well Tested** - Comprehensive test suite (35 tests passing)
+- 🚀 **VS Code Support** - Syntax highlighting and debugging
 - 💬 **Interactive REPL** - Test code interactively
 - 🔄 **Advanced Features** - Nested functions, scoping, error handling
 
+## 🎉 Why Convo?
+
+Most programming languages prioritize brevity and efficiency for experienced developers. Convo prioritizes **readability** and **accessibility**, making programming concepts clear to everyone.
+
+**Traditional:**
+```python
+if user.age >= 18 and user.has_license:
+    print("Can drive")
+```
+
+**Convo:**
+```convo
+If age greater than 18 and has_license equals true then:
+    Say "Can drive"
+    ```
+
+    ---
 ## 🚀 Quick Start
 
 ### Installation
@@ -180,6 +197,11 @@ tests/               # Comprehensive test suite
 ```bash
 python -m pytest tests/ -v
 ```
+### VS Code Tasks
+
+- **Run Convo Program**: Execute any `.convo` file
+- **Run Convo Interactive**: Start the REPL
+- **Run Tests**: Execute the test suite
 
 ## 🤖 Discord Bot Development
 
@@ -189,53 +211,6 @@ python -m pytest tests/ -v
 - **You write**: Natural Convo language (`Call create_discord_bot with "TOKEN"`)
 - **You DON'T write**: Complex Python (`@bot.command`, `async def`, `await ctx.send()`)
 - **Convo handles**: All Discord API complexity, async/await, error handling
-
-### Setup
-To get started with Convo:
-1. Clone the repository: `git clone https://github.com/DreadHeadHippy/Convo.git`
-2. Change into the project directory: `cd Convo`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run your first Convo program as shown below.
-## 🔒 Security Best Practices
-
-Convo development should follow standard security procedures:
-
-- **Never commit secrets or sensitive information to source control.** Use environment variables or a `.env` file for configuration.
-- **Validate all user input** to prevent code injection and abuse.
-- **Keep dependencies up to date** and check for vulnerabilities (e.g., with `pip-audit`).
-- **Monitor and log application activity** for suspicious behavior.
-- **Report vulnerabilities** via the [SECURITY.md](SECURITY.md) file.
-
-### Quick Start
-```convo
-# Create and configure a Discord bot
-
-# Convo Programming Language
-
-![Test Status](https://github.com/DreadHeadHippy/Convo/actions/workflows/ci-tests-new.yml/badge.svg)
-
-**Current Version:** V0.0.1
-
----
-
-Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
-
-# Add message listeners
-Define greet_user with message:
-    Let username be get_user_name(message)
-    Return "Hello " + username + "! Welcome to the server!"
-
-Call listen_for_message with "contains \"hello\"", greet_user
-
-# Add custom commands
-Define tell_joke with ctx:
-    Return "Why did the programmer quit? Because they didn't get arrays! 😄"
-
-Call add_discord_command with "joke", "Get a programming joke", tell_joke
-
-# Start the bot
-Call start_discord_bot
-```
 
 ### Available Discord Functions
 - `create_discord_bot(token, prefix)` - Create bot instance
@@ -252,11 +227,9 @@ Call start_discord_bot
 
 ## 🛠️ Development
 
-### VS Code Tasks
+![Test Status](https://github.com/DreadHeadHippy/Convo/actions/workflows/ci-tests-new.yml/badge.svg)
 
-- **Run Convo Program**: Execute any `.convo` file
-- **Run Convo Interactive**: Start the REPL
-- **Run Tests**: Execute the test suite
+**Current Version:** V0.0.1
 
 ### Adding New Features
 
@@ -287,25 +260,6 @@ We welcome contributions! Please feel free to:
 ## 📜 License
 
 Apache License 2.0 - see [LICENSE](LICENSE) file for details.
-
-## 🎉 Why Convo?
-
-Most programming languages prioritize brevity and efficiency for experienced developers. Convo prioritizes **readability** and **accessibility**, making programming concepts clear to everyone.
-
-**Traditional:**
-```python
-if user.age >= 18 and user.has_license:
-    print("Can drive")
-```
-
-**Convo:**
-```convo
-If age greater than 18 and has_license equals true then:
-    Say "Can drive"
-```
-
----
-
 
 ## 💖 Support
 
