@@ -201,7 +201,7 @@ python -m pytest tests/ -v
 
 # Convo Programming Language
 
-![Test Status](https://github.com/DreadHeadHippy/Convo/actions/workflows/python-app.yml/badge.svg)
+![Test Status](https://github.com/DreadHeadHippy/Convo/actions/workflows/ci-tests-new.yml/badge.svg)
 
 **Current Version:** V0.0.1
 
