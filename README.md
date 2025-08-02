@@ -9,9 +9,8 @@
 [![GitHub issues](https://img.shields.io/github/issues/DreadHeadHippy/Convo)](https://github.com/DreadHeadHippy/Convo/issues)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
-[![Status](https://img.shields.io/badge/status-production%20ready-success)](examples/)
 
-Convo is a **production-ready programming language** that reads like natural English, making programming accessible to everyone. Create real applications, Discord bots, games, and more with intuitive, conversational syntax.
+Convo is a **programming language** that reads like natural English, making programming accessible to everyone. Create real applications, Discord bots, games, and more with intuitive, conversational syntax.
 
 ## 🎉 Why Convo?
 
