@@ -65,6 +65,10 @@ class ConvoDiscordBot:
         
         # Create intents more safely - avoid hanging
         try:
+            # Type check to satisfy linter
+            if discord is None or commands is None:
+                raise RuntimeError("Discord library not available")
+                
             intents = discord.Intents.default()
             intents.message_content = True
             intents.members = True
@@ -74,6 +78,8 @@ class ConvoDiscordBot:
         except Exception as e:
             # Fallback to minimal intents if all fail
             print(f"Warning: Using minimal intents due to error: {e}")
+            if discord is None or commands is None:
+                raise RuntimeError("Discord library not available")
             intents = discord.Intents.default()
             intents.message_content = True
             self.bot = commands.Bot(command_prefix=prefix, intents=intents)
@@ -193,8 +199,10 @@ class ConvoDiscordBot:
         # Register slash command with discord.py
         if guild_id:
             # Guild-specific command
+            if discord is None:
+                raise RuntimeError("Discord library not available")
             @self.bot.tree.command(name=name, description=description, guild=discord.Object(id=guild_id))
-            async def slash_command(interaction: discord.Interaction):
+            async def slash_command(interaction):  # Remove type hint to avoid linter issues
                 try:
                     result = action(interaction)
                     if result:
@@ -206,7 +214,7 @@ class ConvoDiscordBot:
         else:
             # Global command
             @self.bot.tree.command(name=name, description=description)
-            async def slash_command(interaction: discord.Interaction):
+            async def slash_command(interaction):  # Remove type hint to avoid linter issues
                 try:
                     result = action(interaction)
                     if result:
@@ -221,6 +229,8 @@ class ConvoDiscordBot:
         try:
             if guild_id:
                 # Sync to specific guild
+                if discord is None:
+                    raise RuntimeError("Discord library not available")
                 guild = discord.Object(id=guild_id)
                 synced = await self.bot.tree.sync(guild=guild)
                 print(f"Synced {len(synced)} commands to guild {guild_id}")
