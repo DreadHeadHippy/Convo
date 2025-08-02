@@ -7,7 +7,7 @@ We actively support the following versions of Convo:
 | Version | Supported          |
 | ------- | ------------------ |
 | main    | :white_check_mark: |
-| Latest release | :white_check_mark: |
+| development | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
@@ -60,11 +60,5 @@ When using Convo for Discord bots:
 3. **Validate inputs** - Always validate user-provided data
 4. **Principle of least privilege** - Run with minimal necessary permissions
 5. **Review code** - Carefully review Convo programs before execution
-
-## Response Timeline
-
-- **Critical vulnerabilities**: Response within 24 hours
-- **High severity**: Response within 3 days
-- **Medium/Low severity**: Response within 1 week
 
 We appreciate responsible disclosure and will work with security researchers to address issues promptly.
