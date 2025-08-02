@@ -1,0 +1,240 @@
+# Discord Bot with Interactive UI Components
+# This example demonstrates buttons, modals, select menus, and context menus
+# Written in pure Convo - no Python knowledge required!
+
+Say "🚀 Creating advanced Discord bot with interactive UI components..."
+
+# Import Discord functionality
+Import discord
+
+# Create the bot
+Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
+
+# Example 1: Interactive Buttons
+Define button_demo_command with interaction:
+    Say "Creating interactive buttons..."
+    
+    # Create buttons with different styles
+    Let help_button be create_button("Help", "primary", "help_btn", "❓")
+    Let settings_button be create_button("Settings", "secondary", "settings_btn", "⚙️")
+    Let danger_button be create_button("Delete", "danger", "delete_btn", "🗑️")
+    
+    # Create callbacks for buttons
+    Define help_callback with interaction:
+        Return "📖 This is the help information!"
+    
+    Define settings_callback with interaction:
+        Return "⚙️ Opening settings panel..."
+    
+    Define danger_callback with interaction:
+        Return "🗑️ Are you sure you want to delete this?"
+    
+    # Create view and add buttons with callbacks
+    Let view be create_view(300)  # 5 minute timeout
+    Call view.add_button with help_button, help_callback
+    Call view.add_button with settings_button, settings_callback
+    Call view.add_button with danger_button, danger_callback
+    
+    # Send message with buttons
+    Return send_message_with_components(interaction.channel, "🎮 Interactive Button Demo", null, view)
+
+Call create_global_slash_command with "buttons", "Demo interactive buttons", button_demo_command
+
+# Example 2: Select Menu (Dropdown)
+Define menu_demo_command with interaction:
+    Say "Creating select menu..."
+    
+    # Create options for the select menu
+    Let options be [
+        {"label": "🎮 Gaming", "value": "gaming", "description": "Gaming related content"},
+        {"label": "🎵 Music", "value": "music", "description": "Music and audio content"},
+        {"label": "📚 Study", "value": "study", "description": "Educational content"},
+        {"label": "🍕 Food", "value": "food", "description": "Food and cooking content"}
+    ]
+    
+    # Create select menu
+    Let menu be create_select_menu("Choose your interests", options, "interests_menu")
+    
+    # Create callback for menu selection
+    Define menu_callback with interaction, values:
+        Let selected be values[0]
+        If selected equal "gaming" then:
+            Return "🎮 Great choice! Gaming content coming up!"
+        Else if selected equal "music" then:
+            Return "🎵 Awesome! Here's some music content!"
+        Else if selected equal "study" then:
+            Return "📚 Perfect! Educational content for you!"
+        Else:
+            Return "🍕 Yummy! Food content coming right up!"
+    
+    # Create view and add menu
+    Let view be create_view()
+    Call view.add_select with menu, menu_callback
+    
+    # Send message with select menu
+    Return send_message_with_components(interaction.channel, "📋 Choose your content preference:", null, view)
+
+Call create_global_slash_command with "menu", "Demo select dropdown menu", menu_demo_command
+
+# Example 3: Modal Dialog (Form Input)
+Define modal_demo_command with interaction:
+    Say "Creating modal dialog..."
+    
+    # Create text inputs for the modal
+    Let name_input be create_modal_input("Your Name", "Enter your full name", true, 2, 50)
+    Let email_input be create_modal_input("Email", "your@email.com", true, 5, 100)
+    Let feedback_input be create_modal_input("Feedback", "Tell us what you think...", false, 10, 500, "paragraph")
+    
+    # Create modal with inputs
+    Let modal be create_modal("User Feedback Form", "feedback_modal", [name_input, email_input, feedback_input])
+    
+    # Set callback for when modal is submitted
+    Define modal_callback with interaction, field_values:
+        Let name be field_values["your_name"]
+        Let email be field_values["email"]
+        Let feedback be field_values["feedback"]
+        
+        Return "✅ Thank you " + name + "! We received your feedback from " + email
+
+    Call modal.set_callback with modal_callback
+    
+    # Show the modal
+    Return show_modal(interaction, modal)
+
+Call create_global_slash_command with "feedback", "Open feedback form modal", modal_demo_command
+
+# Example 4: Combined Embed with Components
+Define embed_demo_command with interaction:
+    Say "Creating rich embed with components..."
+    
+    # Create buttons for the embed
+    Let like_button be create_button("👍 Like", "success", "like_btn")
+    Let share_button be create_button("📤 Share", "primary", "share_btn")
+    Let more_button be create_button("➕ More", "secondary", "more_btn")
+    
+    # Create select menu for categories
+    Let categories be [
+        {"label": "⭐ Favorites", "value": "favorites"},
+        {"label": "📝 Save for Later", "value": "save"},
+        {"label": "🔗 Copy Link", "value": "copy"}
+    ]
+    Let category_menu be create_select_menu("Actions", categories)
+    
+    # Create embed with components
+    Let result be create_embed_with_components(
+        "🌟 Amazing Content!",
+        "This is a rich embed with interactive components below. Try clicking the buttons or using the dropdown menu!",
+        "#7289DA",
+        [like_button, share_button, more_button],
+        category_menu
+    )
+    
+    Let embed be result[0]
+    Let view be result[1]
+    
+    # Send the embed with components
+    Return send_message_with_components(interaction.channel, null, embed, view)
+
+Call create_global_slash_command with "embed", "Demo embed with components", embed_demo_command
+
+# Example 5: Context Menu Commands (Right-click menus)
+Define user_info_context with interaction:
+    Let user be interaction.target
+    Return "👤 User: " + user.display_name + " joined on " + str(user.created_at)
+
+Define message_info_context with interaction:
+    Let message be interaction.target
+    Return "📝 Message by " + message.author.display_name + ": " + message.content[:100]
+
+# Create context menu commands
+Let user_context be create_context_menu_user("Get User Info")
+Let message_context be create_context_menu_message("Analyze Message")
+
+# Apply decorators
+Let user_info_context be user_context(user_info_context)
+Let message_info_context be message_context(message_info_context)
+
+# Example 6: Advanced Modal with Dynamic Content
+Define survey_command with interaction:
+    Say "Creating dynamic survey modal..."
+    
+    # Create inputs based on user level (this could be from a database)
+    Let level be "beginner"  # This could be fetched from user data
+    
+    Let question1 be create_modal_input("Experience Level", "How would you rate your experience?", true, 1, 20)
+    
+    If level equal "beginner" then:
+        Let question2 be create_modal_input("Preferred Learning Style", "Visual, Audio, or Reading?", true, 4, 50)
+    Else:
+        Let question2 be create_modal_input("Advanced Topics", "What advanced topics interest you?", true, 10, 200)
+    
+    Let suggestion_input be create_modal_input("Suggestions", "Any suggestions for improvement?", false, 0, 500, "paragraph")
+    
+    # Create modal
+    Let modal be create_modal("Dynamic Survey", "survey_modal", [question1, question2, suggestion_input])
+    
+    Define survey_callback with interaction, field_values:
+        Return "📊 Survey completed! Thank you for your valuable feedback."
+    
+    Call modal.set_callback with survey_callback
+    
+    Return show_modal(interaction, modal)
+
+Call create_global_slash_command with "survey", "Take a dynamic survey", survey_command
+
+# Example 7: Gaming Bot with Interactive Elements
+Define game_command with interaction:
+    Say "Starting interactive game..."
+    
+    # Create game buttons
+    Let rock_btn be create_button("🪨 Rock", "primary", "rock")
+    Let paper_btn be create_button("📄 Paper", "primary", "paper") 
+    Let scissors_btn be create_button("✂️ Scissors", "primary", "scissors")
+    
+    # Game logic callback
+    Define game_callback with interaction:
+        Let choices be ["rock", "paper", "scissors"]
+        Let bot_choice be choices[1]  # Simplified - normally would be random
+        Let user_choice be interaction.custom_id
+        
+        If user_choice equal bot_choice then:
+            Return "🤝 It's a tie! You both chose " + user_choice
+        Else if user_choice equal "rock" and bot_choice equal "scissors" then:
+            Return "🎉 You win! Rock crushes scissors!"
+        Else if user_choice equal "paper" and bot_choice equal "rock" then:
+            Return "🎉 You win! Paper covers rock!"
+        Else if user_choice equal "scissors" and bot_choice equal "paper" then:
+            Return "🎉 You win! Scissors cut paper!"
+        Else:
+            Return "🤖 Bot wins! " + bot_choice + " beats " + user_choice
+    
+    # Create view and add game buttons
+    Let view be create_view()
+    Call view.add_button with rock_btn, game_callback
+    Call view.add_button with paper_btn, game_callback
+    Call view.add_button with scissors_btn, game_callback
+    
+    Return send_message_with_components(
+        interaction.channel,
+        "🎮 **Rock Paper Scissors Game**\nChoose your move by clicking a button!",
+        null,
+        view
+    )
+
+Call create_global_slash_command with "game", "Play rock paper scissors", game_command
+
+# Sync all commands and start the bot
+Say "🔄 Syncing slash commands with Discord..."
+Call sync_global_commands
+
+Say "🤖 Starting Discord bot with full UI support..."
+Say "✨ Available commands:"
+Say "  /buttons - Interactive button demo"
+Say "  /menu - Select dropdown menu demo"
+Say "  /feedback - Modal form dialog demo"
+Say "  /embed - Rich embed with components"
+Say "  /survey - Dynamic survey modal"
+Say "  /game - Interactive rock paper scissors"
+Say "  Right-click on users/messages for context menus!"
+
+Call start_discord_bot

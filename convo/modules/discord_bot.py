@@ -165,6 +165,57 @@ class ConvoDiscordBot:
             except Exception as e:
                 await ctx.send(f"Error: {e}")
     
+    def add_slash_command(self, name: str, description: str, action: Callable, guild_id: Optional[int] = None):
+        """Add a slash command (global or guild-specific)"""
+        command_obj = ConvoDiscordCommand(
+            name=name,
+            description=description,
+            action=action,
+            parameters=[]
+        )
+        self.commands.append(command_obj)
+        
+        # Register slash command with discord.py
+        if guild_id:
+            # Guild-specific command
+            @self.bot.tree.command(name=name, description=description, guild=discord.Object(id=guild_id))
+            async def slash_command(interaction: discord.Interaction):
+                try:
+                    result = action(interaction)
+                    if result:
+                        await interaction.response.send_message(str(result))
+                    else:
+                        await interaction.response.send_message("Command executed successfully!")
+                except Exception as e:
+                    await interaction.response.send_message(f"Error: {e}")
+        else:
+            # Global command
+            @self.bot.tree.command(name=name, description=description)
+            async def slash_command(interaction: discord.Interaction):
+                try:
+                    result = action(interaction)
+                    if result:
+                        await interaction.response.send_message(str(result))
+                    else:
+                        await interaction.response.send_message("Command executed successfully!")
+                except Exception as e:
+                    await interaction.response.send_message(f"Error: {e}")
+    
+    async def sync_commands(self, guild_id: Optional[int] = None):
+        """Sync slash commands with Discord"""
+        try:
+            if guild_id:
+                # Sync to specific guild
+                guild = discord.Object(id=guild_id)
+                synced = await self.bot.tree.sync(guild=guild)
+                print(f"Synced {len(synced)} commands to guild {guild_id}")
+            else:
+                # Sync globally
+                synced = await self.bot.tree.sync()
+                print(f"Synced {len(synced)} global commands")
+        except Exception as e:
+            print(f"Failed to sync commands: {e}")
+    
     def start(self):
         """Start the Discord bot"""
         if not self.token:
@@ -204,6 +255,21 @@ class DiscordModule:
             raise RuntimeError("No bot created. Use 'Create bot' first.")
         
         self.current_bot.add_command(name, description, action)
+    
+    def add_slash_command(self, name: str, description: str, action: Callable, guild_id: Optional[int] = None):
+        """Add slash command to current bot (global or guild-specific)"""
+        if not self.current_bot:
+            raise RuntimeError("No bot created. Use 'Create bot' first.")
+        
+        self.current_bot.add_slash_command(name, description, action, guild_id)
+    
+    def sync_commands(self, guild_id: Optional[int] = None):
+        """Sync slash commands with Discord"""
+        if not self.current_bot:
+            raise RuntimeError("No bot created. Use 'Create bot' first.")
+        
+        # Run the sync in the bot's event loop
+        asyncio.create_task(self.current_bot.sync_commands(guild_id))
     
     def start_bot(self):
         """Start the current bot"""
@@ -250,6 +316,30 @@ def add_discord_command(name: str, description: str, action: Callable):
     """Add a Discord command"""
     discord_module.add_command(name, description, action)
 
+def create_global_slash_command(name: str, description: str, action: Callable):
+    """Create a global slash command (available in all servers)"""
+    discord_module.add_slash_command(name, description, action, None)
+
+def create_guild_slash_command(name: str, description: str, action: Callable, guild_id: int):
+    """Create a guild-specific slash command (only available in specified server)"""
+    discord_module.add_slash_command(name, description, action, guild_id)
+
+def create_slash_command(name: str, description: str, action: Callable):
+    """Create a slash command (legacy function - creates global command)"""
+    discord_module.add_slash_command(name, description, action, None)
+
+def sync_discord_commands(guild_id: Optional[int] = None):
+    """Sync slash commands with Discord"""
+    discord_module.sync_commands(guild_id)
+
+def sync_global_commands():
+    """Sync global slash commands with Discord"""
+    discord_module.sync_commands(None)
+
+def sync_guild_commands(guild_id: int):
+    """Sync guild-specific slash commands with Discord"""
+    discord_module.sync_commands(guild_id)
+
 def start_discord_bot():
     """Start the Discord bot"""
     discord_module.start_bot()
@@ -270,6 +360,24 @@ def get_message_content(message):
         return message.content
     return ""
 
+def get_interaction_user(interaction):
+    """Get the user from an interaction"""
+    if hasattr(interaction, 'user') and hasattr(interaction.user, 'display_name'):
+        return interaction.user.display_name
+    return "User"
+
+def get_interaction_guild(interaction):
+    """Get the guild from an interaction"""
+    if hasattr(interaction, 'guild') and hasattr(interaction.guild, 'name'):
+        return interaction.guild.name
+    return "Unknown Server"
+
+def get_interaction_channel(interaction):
+    """Get the channel from an interaction"""
+    if hasattr(interaction, 'channel') and hasattr(interaction.channel, 'name'):
+        return interaction.channel.name
+    return "Unknown Channel"
+
 # Discord functions to be integrated into Convo builtins
 try:
     from .discord_advanced import ADVANCED_DISCORD_FUNCTIONS
@@ -281,14 +389,28 @@ try:
 except ImportError:
     DISCORD_ERROR_HANDLING = {}
 
+try:
+    from .discord_ui import DISCORD_UI_FUNCTIONS
+except ImportError:
+    DISCORD_UI_FUNCTIONS = {}
+
 DISCORD_FUNCTIONS = {
     'create_discord_bot': create_discord_bot,
     'listen_for_message': listen_for_message,
     'add_discord_command': add_discord_command,
+    'create_global_slash_command': create_global_slash_command,
+    'create_guild_slash_command': create_guild_slash_command,
+    'create_slash_command': create_slash_command,
+    'sync_discord_commands': sync_discord_commands,
+    'sync_global_commands': sync_global_commands,
+    'sync_guild_commands': sync_guild_commands,
     'start_discord_bot': start_discord_bot,
     'reply_with_text': reply_with_text,
     'get_user_name': get_user_name,
     'get_message_content': get_message_content,
+    'get_interaction_user': get_interaction_user,
+    'get_interaction_guild': get_interaction_guild,
+    'get_interaction_channel': get_interaction_channel,
 }
 
 # Add advanced Discord functions
@@ -296,3 +418,6 @@ DISCORD_FUNCTIONS.update(ADVANCED_DISCORD_FUNCTIONS)
 
 # Add error handling utilities
 DISCORD_FUNCTIONS.update(DISCORD_ERROR_HANDLING)
+
+# Add UI component functions
+DISCORD_FUNCTIONS.update(DISCORD_UI_FUNCTIONS)

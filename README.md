@@ -47,7 +47,7 @@ Define calculate_grade with score:
 - **Type System** - Dynamic typing with runtime safety
 
 ### 🎯 **Real-World Applications**
-- **Discord Bots** - 23 built-in functions for bot development
+- **Discord Bots** - 43 built-in functions for bot development
 - **Games & Interactive Programs** - Full control flow and state management
 - **Data Processing** - Lists, dictionaries, and comprehensions
 - **Educational Tools** - Perfect for teaching programming concepts
@@ -62,7 +62,7 @@ Define calculate_grade with score:
 - **Error Handling** - Comprehensive exception management
 
 ### 🔧 **Developer Experience**
-- **100% Test Coverage** - 77 passing tests ensuring reliability
+- **100% Test Coverage** - 104 passing tests ensuring reliability
 - **VS Code Integration** - Syntax highlighting and debugging
 - **Interactive REPL** - Live code testing and exploration
 - **Comprehensive Documentation** - Examples and guides
@@ -154,7 +154,11 @@ Now that you know the syntax, explore these working example programs:
 - **📋 Discord Setup Guide** (`discord_setup_guide.convo`) - Complete bot setup tutorial
 - **🤖 Discord Bot Basic** (`discord_bot_basic.convo`) - Simple bot with commands
 - **🤖 Discord Bot Advanced** (`discord_bot_advanced.convo`) - Complex bot with games and moderation
-- **�️ Discord Moderation Bot** (`discord_moderation_bot.convo`) - Full-featured moderation system
+- **🔥 Discord Bot Modern** (`discord_bot_modern.convo`) - Modern slash commands example
+- **📖 Discord Slash Commands Guide** (`discord_slash_commands_guide.convo`) - Complete slash commands tutorial
+- **🎮 Discord Bot UI Complete** (`discord_bot_ui_complete.convo`) - Interactive buttons, modals, menus
+- **📚 Discord UI Complete Guide** (`discord_ui_complete_guide.convo`) - Comprehensive UI components tutorial
+- **🛡️ Discord Moderation Bot** (`discord_moderation_bot.convo`) - Full-featured moderation system
 
 Try any example:
 ```bash
@@ -249,7 +253,7 @@ convo/
 └── __main__.py       # Entry point for the interpreter
 
 examples/             # Example Convo programs
-tests/               # Comprehensive test suite (77 tests)
+tests/               # Comprehensive test suite (104 tests)
 main.py              # Command-line interface
 ```
 
@@ -290,37 +294,82 @@ Import discord
 # Create a Discord bot
 Call create_discord_bot with "YOUR_BOT_TOKEN", "!"
 
-# Listen for messages
+# Modern slash commands (global - work in all servers)
+Define ping_command with interaction:
+    Let user be get_interaction_user(interaction)
+    Return "🏓 Pong! Hello " + user + "!"
+
+Call create_global_slash_command with "ping", "Check if bot is alive", ping_command
+
+Define info_command with interaction:
+    Let guild be get_interaction_guild(interaction)
+    Return "🤖 I'm a bot written in Convo running in " + guild + "!"
+
+Call create_global_slash_command with "info", "Get bot info", info_command
+
+# Server-specific slash command (replace with your guild ID)
+Define admin_command with interaction:
+    Let user be get_interaction_user(interaction)
+    Return "🔧 Admin tools accessed by " + user
+
+Call create_guild_slash_command with "admin", "Admin tools", admin_command, 123456789
+
+# Sync commands with Discord
+Call sync_global_commands
+
+# Legacy message listener for backward compatibility
 Define handle_hello with message:
     Let username be get_user_name(message)
-    Return "Hello " + username + "!"
+    Return "Hello " + username + "! Try using /ping instead!"
 
 Call listen_for_message with "contains \"hello\"", handle_hello
-
-# Add commands
-Define bot_info with ctx:
-    Return "I'm a bot written in Convo!"
-
-Call add_discord_command with "info", "Get bot info", bot_info
 
 # Start the bot
 Call start_discord_bot
 ```
 
-### Available Discord Functions (23 total)
+### Available Discord Functions (43 total)
 **Basic Functions:**
 - `create_discord_bot(token, prefix)` - Create bot instance
 - `listen_for_message(condition, handler)` - Listen for specific messages
-- `add_discord_command(name, description, handler)` - Add slash commands
+- `add_discord_command(name, description, handler)` - Add traditional prefix commands
 - `start_discord_bot()` - Start the bot
 - `get_user_name(message)` - Get username from message
 - `get_message_content(message)` - Get message text
+
+**Modern Slash Commands:**
+- `create_global_slash_command(name, description, handler)` - Global slash commands (all servers)
+- `create_guild_slash_command(name, description, handler, guild_id)` - Server-specific commands
+- `create_slash_command(name, description, handler)` - Create global slash command (legacy)
+- `sync_global_commands()` - Sync global commands with Discord
+- `sync_guild_commands(guild_id)` - Sync server-specific commands
+- `sync_discord_commands(guild_id?)` - Sync commands (global or guild)
+
+**Interaction Helpers:**
+- `get_interaction_user(interaction)` - Get user from slash command
+- `get_interaction_guild(interaction)` - Get server from slash command
+- `get_interaction_channel(interaction)` - Get channel from slash command
+
+**🎯 Interactive UI Components:**
+- `create_button(label, style, custom_id, emoji, disabled)` - Interactive buttons
+- `create_select_menu(placeholder, options, custom_id, min_vals, max_vals)` - Dropdown menus
+- `create_modal_input(label, placeholder, required, min_len, max_len, style)` - Form inputs
+- `create_modal(title, custom_id, inputs)` - Modal dialogs (forms)
+- `create_view(timeout)` - Component container with timeout
+- `send_message_with_components(channel, content, embed, view)` - Send messages with UI
+- `create_embed_with_components(title, desc, color, buttons, menu)` - Rich embeds with UI
+- `show_modal(interaction, modal)` - Display modal dialog
+
+**🖱️ Context Menus & Advanced:**
+- `create_context_menu_user(name)` - Right-click user commands
+- `create_context_menu_message(name)` - Right-click message commands
+- `create_autocomplete_choices(choices)` - Static autocomplete options
+- `create_dynamic_autocomplete(function)` - Dynamic autocomplete options
 
 **Advanced Functions:**
 - `send_embed()` - Rich embedded messages
 - `add_reaction()` - React to messages  
 - `send_file()` - File uploads/downloads
-- `create_slash_command()` - Modern slash commands
 - `join_voice_channel()` - Voice chat integration
 - `play_audio()` - Music/audio playback
 
@@ -331,11 +380,13 @@ Call start_discord_bot
 - `debug_discord_environment()` - Debugging tools
 
 ### Bot Types You Can Build
-- **🛡️ Moderation Bots** - Auto-moderation, warnings, bans, raid protection
-- **🎮 Game Bots** - Interactive games, trivia, RPG systems  
-- **🔧 Utility Bots** - Server management, polls, reminders
-- **🎵 Music Bots** - Audio playback and voice channel integration
-- **📊 Analytics Bots** - Server statistics and user tracking
+- **🛡️ Moderation Bots** - Auto-moderation, warnings, bans, raid protection with interactive appeals
+- **🎮 Game Bots** - Interactive games with buttons, trivia with select menus, RPG systems with modals
+- **🔧 Utility Bots** - Server management with UI forms, polls with buttons, reminders with interactive setup
+- **🎵 Music Bots** - Audio playback controls via buttons, playlist management with dropdowns
+- **📊 Analytics Bots** - Interactive dashboards with buttons, user surveys with modal forms
+- **💼 Business Bots** - Support ticket systems with modal forms, application processes with step-by-step UI
+- **🎓 Educational Bots** - Interactive quizzes with buttons, learning paths with select menus, progress tracking
 
 ## 🎯 Use Cases
 

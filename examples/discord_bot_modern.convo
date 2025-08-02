@@ -1,0 +1,86 @@
+# Modern Discord Bot with Slash Commands in Convo
+# This demonstrates the new slash command functionality
+
+Say "Creating Modern Discord Bot with Slash Commands..."
+
+# Get bot token from environment variable for security
+Let token be get_env("DISCORD_BOT_TOKEN")
+
+If token equals None then:
+    Say "ERROR: DISCORD_BOT_TOKEN environment variable not set!"
+    Say "Please set your Discord bot token as an environment variable."
+    Return
+
+# Create bot with custom prefix
+Let bot_created be create_discord_bot(token, "/")
+
+Say "Modern bot created! Setting up slash commands..."
+
+# Global slash command (available in all servers)
+Define ping_handler with interaction:
+    Let user be get_interaction_user(interaction)
+    Return "🏓 Pong! Hello " + user + "!"
+
+Call create_global_slash_command with "ping", "Check if bot is alive", ping_handler
+
+# Another global command - bot info
+Define info_handler with interaction:
+    Let guild be get_interaction_guild(interaction)
+    Let channel be get_interaction_channel(interaction)
+    Return "🤖 I'm a Convo bot running in " + guild + " in channel #" + channel
+
+Call create_global_slash_command with "info", "Get bot information", info_handler
+
+# Guild-only command (replace 123456789 with your server ID)
+Define admin_handler with interaction:
+    Let user be get_interaction_user(interaction)
+    Return "🔧 Admin command executed by " + user + ". This only works in this server!"
+
+# Uncomment the line below and replace with your actual guild ID
+# Call create_guild_slash_command with "admin", "Admin only command", admin_handler, 123456789
+
+# Random number command
+Define random_handler with interaction:
+    Let number be random_int(1, 100)
+    Let user be get_interaction_user(interaction)
+    Return "🎲 " + user + ", your random number is: " + to_text(number)
+
+Call create_global_slash_command with "random", "Get a random number", random_handler
+
+# Calculator command
+Define calc_handler with interaction:
+    Let result be 2 + 2
+    Return "🧮 Quick math: 2 + 2 = " + to_text(result)
+
+Call create_global_slash_command with "calc", "Simple calculator", calc_handler
+
+Say "Slash commands created! Syncing with Discord..."
+
+# Sync global commands with Discord
+Call sync_global_commands
+
+Say ""
+Say "=== Modern Discord Bot Features ==="
+Say "✅ Global slash commands created:"
+Say "   /ping - Check bot status"
+Say "   /info - Get bot information"  
+Say "   /random - Get random number"
+Say "   /calc - Simple calculator"
+Say ""
+Say "✅ Commands will be available in all servers"
+Say "✅ Modern Discord slash command interface"
+Say "✅ Natural language Convo syntax"
+Say ""
+Say "Starting bot... Use /ping to test!"
+
+# Traditional message listener for legacy support
+Define hello_handler with message:
+    Let content be get_message_content(message)
+    If contains(lower(content), "hello") then:
+        Let username be get_user_name(message)
+        Return "👋 Hello " + username + "! Try using /ping instead!"
+
+Call listen_for_message with "contains \"hello\"", hello_handler
+
+# Start the bot
+Call start_discord_bot

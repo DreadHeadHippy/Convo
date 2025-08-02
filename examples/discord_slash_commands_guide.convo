@@ -1,0 +1,167 @@
+# Complete Discord Slash Commands Guide in Convo
+# Demonstrates all slash command types and best practices
+
+Say "=== Discord Slash Commands Complete Guide ==="
+Say ""
+
+# Get bot token from environment variable
+Let token be get_env("DISCORD_BOT_TOKEN")
+
+If token equals None then:
+    Say "❌ DISCORD_BOT_TOKEN not found!"
+    Say ""
+    Say "To set up your Discord bot token:"
+    Say "1. Go to https://discord.com/developers/applications"
+    Say "2. Create a new application or select existing one"
+    Say "3. Go to 'Bot' section and copy the token"
+    Say "4. Set environment variable:"
+    Say "   Windows: set DISCORD_BOT_TOKEN=your_token_here"
+    Say "   Linux/Mac: export DISCORD_BOT_TOKEN=your_token_here"
+    Say ""
+    Return
+
+# Create the bot
+Let bot_created be create_discord_bot(token, "!")
+
+Say "✅ Bot created successfully!"
+Say ""
+
+# ===========================================
+# GLOBAL SLASH COMMANDS (Available everywhere)
+# ===========================================
+
+Say "Setting up GLOBAL slash commands..."
+
+# Basic ping command
+Define global_ping with interaction:
+    Let user be get_interaction_user(interaction)
+    Return "🏓 Global Pong! Hello " + user + "!"
+
+Call create_global_slash_command with "ping", "Check if bot is alive", global_ping
+
+# Bot information command
+Define global_info with interaction:
+    Let guild be get_interaction_guild(interaction)
+    Let user be get_interaction_user(interaction)
+    Return "🤖 Bot Info:\n• Running in: " + guild + "\n• User: " + user + "\n• Language: Convo"
+
+Call create_global_slash_command with "botinfo", "Get bot information", global_info
+
+# Random number generator
+Define global_random with interaction:
+    Let number be random_int(1, 1000)
+    Let user be get_interaction_user(interaction)
+    Return "🎲 " + user + ", your random number is: " + to_text(number)
+
+Call create_global_slash_command with "random", "Generate a random number", global_random
+
+# Simple calculator
+Define global_calculator with interaction:
+    Let num1 be 15
+    Let num2 be 25
+    Let result be num1 + num2
+    Return "🧮 Sample calculation: " + to_text(num1) + " + " + to_text(num2) + " = " + to_text(result)
+
+Call create_global_slash_command with "calc", "Simple calculator demo", global_calculator
+
+# Server statistics
+Define global_stats with interaction:
+    Let guild be get_interaction_guild(interaction)
+    Let channel be get_interaction_channel(interaction)
+    Return "📊 Server Stats:\n• Server: " + guild + "\n• Channel: #" + channel + "\n• Status: Active"
+
+Call create_global_slash_command with "stats", "Get server statistics", global_stats
+
+Say "✅ Global commands created!"
+
+# ===========================================
+# GUILD-SPECIFIC COMMANDS (Server-only)
+# ===========================================
+
+Say "Setting up GUILD-SPECIFIC commands..."
+Say ""
+Say "Note: Guild commands need a specific server ID."
+Say "Replace the example guild ID with your actual server ID."
+Say ""
+
+# Example guild ID (replace with your actual server ID)
+Let example_guild_id be 123456789012345678
+
+# Admin-only command (guild-specific)
+Define guild_admin with interaction:
+    Let user be get_interaction_user(interaction)
+    Let guild be get_interaction_guild(interaction)
+    Return "🔧 Admin Command Executed!\n• User: " + user + "\n• Server: " + guild + "\n• Access: Guild Admin"
+
+# Uncomment the next line and use your real guild ID
+# Call create_guild_slash_command with "admin", "Admin only command", guild_admin, example_guild_id
+
+# Moderation command (guild-specific)
+Define guild_moderate with interaction:
+    Let user be get_interaction_user(interaction)
+    Return "🛡️ Moderation tools accessed by " + user + ". This command only works in this server!"
+
+# Uncomment the next line and use your real guild ID  
+# Call create_guild_slash_command with "moderate", "Moderation tools", guild_moderate, example_guild_id
+
+Say "⚠️  Guild commands are commented out (need real server ID)"
+Say ""
+
+# ===========================================
+# SYNC COMMANDS WITH DISCORD
+# ===========================================
+
+Say "Syncing commands with Discord..."
+
+# Sync global commands
+Call sync_global_commands
+
+# Sync guild commands (if you have any)
+# Uncomment the next line to sync guild commands
+# Call sync_guild_commands with example_guild_id
+
+Say "✅ Commands synced!"
+Say ""
+
+# ===========================================
+# LEGACY MESSAGE SUPPORT
+# ===========================================
+
+Say "Setting up legacy message support..."
+
+# Traditional message listener for backward compatibility
+Define legacy_help with message:
+    Let content be lower(get_message_content(message))
+    If contains(content, "help") then:
+        Let username be get_user_name(message)
+        Return "Hi " + username + "! 👋\n\nAvailable slash commands:\n• /ping - Test bot\n• /botinfo - Bot information\n• /random - Random number\n• /calc - Calculator\n• /stats - Server stats\n\nUse slash commands (/) for the best experience!"
+
+Call listen_for_message with "contains \"help\"", legacy_help
+
+Say "✅ Legacy support added!"
+Say ""
+
+# ===========================================
+# START THE BOT
+# ===========================================
+
+Say "=== Discord Bot Ready! ==="
+Say ""
+Say "🌍 GLOBAL Commands (work in all servers):"
+Say "   /ping - Test the bot"
+Say "   /botinfo - Get bot information"
+Say "   /random - Generate random number"
+Say "   /calc - Calculator demo"
+Say "   /stats - Server statistics"
+Say ""
+Say "🏠 GUILD Commands (server-specific):"
+Say "   /admin - Admin tools (commented out)"
+Say "   /moderate - Moderation (commented out)"
+Say ""
+Say "💬 Legacy Support:"
+Say "   Type 'help' for assistance"
+Say ""
+Say "🚀 Starting bot... Commands should appear in Discord soon!"
+Say ""
+
+Call start_discord_bot
