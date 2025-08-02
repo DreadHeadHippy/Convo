@@ -72,10 +72,32 @@ Define calculate_grade with score:
 
 ### Installation
 
+#### Option 1: Install from GitHub (Recommended)
+```bash
+# Install Convo directly from GitHub
+pip install git+https://github.com/DreadHeadHippy/Convo.git
+
+# Or install with Discord bot support
+pip install "git+https://github.com/DreadHeadHippy/Convo.git#egg=convo-lang[discord]"
+```
+
+#### Option 2: Install from Source
 ```bash
 git clone https://github.com/DreadHeadHippy/Convo.git
 cd Convo
-pip install -r requirements.txt
+pip install -e .
+
+# Or with Discord support
+pip install -e ".[discord]"
+```
+
+#### Verify Installation
+```bash
+# Test the installation
+convo --version
+
+# Test Discord module (if installed with discord extras)
+python -c "from convo.modules.discord_bot import DiscordModule; print('Discord ready!')"
 ```
 
 ### Your First Convo Program
