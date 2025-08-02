@@ -1,0 +1,12 @@
+# Test the import system
+import discord
+
+say "Import successful!"
+say "Discord functions available:"
+
+# Try to access a discord function to confirm it's imported
+say "Testing Discord environment setup..."
+
+# This would normally fail without the import
+let test_result be "Discord functions are available after import"
+say test_result

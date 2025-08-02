@@ -1,0 +1,286 @@
+# Advanced Discord Moderation Bot in Convo
+# Comprehensive moderation features for Discord servers
+
+Say "🛡️ Setting up Advanced Moderation Bot..."
+
+# Get bot token from environment
+Let token be get_env("DISCORD_BOT_TOKEN")
+If token equals null then:
+    Say "ERROR: Please set DISCORD_BOT_TOKEN environment variable!"
+    Stop
+
+# Create moderation bot
+Let bot be create_discord_bot(token, "!")
+Say "✅ Moderation bot created!"
+
+# =============================================================================
+# 1. AUTOMATIC CONTENT MODERATION
+# =============================================================================
+
+# Bad word filter with severity levels
+Let mild_words be ["spam", "annoying", "stupid"]
+Let severe_words be ["toxic", "harassment", "inappropriate"]
+Let banned_words be ["hate", "discrimination", "abuse"]
+
+# Word filter function
+Define filter_message with message:
+    Let content be lower(get_message_content(message))
+    Let username be get_user_name(message)
+    
+    # Check banned words (immediate action)
+    For word in banned_words:
+        If contains(content, word) then:
+            Say "🚨 BANNED WORD DETECTED: " + word
+            Return "🔨 " + username + ", that language is not allowed. Message deleted and warning issued."
+    
+    # Check severe words (warning + log)
+    For word in severe_words:
+        If contains(content, word) then:
+            Say "⚠️ SEVERE WARNING: " + username + " used: " + word
+            Return "⚠️ " + username + ", please keep the chat respectful. This is a warning."
+    
+    # Check mild words (gentle reminder)
+    For word in mild_words:
+        If contains(content, word) then:
+            Return "💬 " + username + ", let's keep the conversation positive!"
+    
+    Return null
+
+Call listen_for_message with "all", filter_message
+
+# =============================================================================
+# 2. SPAM DETECTION
+# =============================================================================
+
+# Spam detection with rate limiting
+Let user_message_count be {}
+Let spam_threshold be 5
+
+Define detect_spam with message:
+    Let username be get_user_name(message)
+    Let content be get_message_content(message)
+    
+    # Track message count per user
+    If contains(user_message_count, username) then:
+        Let count be user_message_count[username]
+        Let user_message_count[username] be count + 1
+    Else:
+        Let user_message_count[username] be 1
+    
+    # Check for spam
+    If user_message_count[username] greater than spam_threshold then:
+        Say "🚨 SPAM DETECTED: " + username + " sent " + user_message_count[username] + " messages"
+        Return "🛑 " + username + ", you're sending messages too quickly. Please slow down!"
+    
+    # Check for repeated content
+    If length(content) less than 10 and contains(content, "!!!") then:
+        Return "📢 " + username + ", please avoid excessive punctuation and caps."
+    
+    Return null
+
+Call listen_for_message with "all", detect_spam
+
+# =============================================================================
+# 3. MODERATION COMMANDS
+# =============================================================================
+
+# Kick command
+Define kick_user with ctx, user_mention, reason:
+    If reason equals null then:
+        Let reason be "No reason provided"
+    
+    Say "👢 KICK: " + user_mention + " | Reason: " + reason
+    Return "✅ User " + user_mention + " has been kicked. Reason: " + reason
+
+Call add_discord_command with "kick", "Kick a user from the server", kick_user
+
+# Ban command
+Define ban_user with ctx, user_mention, reason:
+    If reason equals null then:
+        Let reason be "No reason provided"
+    
+    Say "🔨 BAN: " + user_mention + " | Reason: " + reason
+    Return "🚫 User " + user_mention + " has been banned. Reason: " + reason
+
+Call add_discord_command with "ban", "Ban a user from the server", ban_user
+
+# Mute command
+Define mute_user with ctx, user_mention, duration:
+    If duration equals null then:
+        Let duration be "10 minutes"
+    
+    Say "🔇 MUTE: " + user_mention + " for " + duration
+    Return "🔇 User " + user_mention + " has been muted for " + duration
+
+Call add_discord_command with "mute", "Mute a user", mute_user
+
+# Warning system
+Let user_warnings be {}
+
+Define warn_user with ctx, user_mention, reason:
+    If reason equals null then:
+        Let reason be "General warning"
+    
+    # Track warnings
+    If contains(user_warnings, user_mention) then:
+        Let count be user_warnings[user_mention]
+        Let user_warnings[user_mention] be count + 1
+    Else:
+        Let user_warnings[user_mention] be 1
+    
+    Let warning_count be user_warnings[user_mention]
+    Say "⚠️ WARNING: " + user_mention + " (" + warning_count + " total) | " + reason
+    
+    Let response be "⚠️ " + user_mention + " has been warned. Reason: " + reason + "\n"
+    Let response be response + "Total warnings: " + warning_count
+    
+    # Auto-escalation
+    If warning_count greater equal 3 then:
+        Let response be response + "\n🚨 **AUTO-ESCALATION**: 3+ warnings detected!"
+    
+    Return response
+
+Call add_discord_command with "warn", "Warn a user", warn_user
+
+# =============================================================================
+# 4. SERVER PROTECTION
+# =============================================================================
+
+# Anti-raid protection
+Let recent_joins be []
+Let raid_threshold be 5
+
+Define check_raid with message:
+    Let content be get_message_content(message)
+    
+    # Detect mass joins
+    If contains(content, "joined the server") then:
+        Let username be get_user_name(message)
+        Call add(recent_joins, username)
+        
+        # Check for raid pattern
+        If length(recent_joins) greater than raid_threshold then:
+            Say "🚨 POTENTIAL RAID DETECTED: " + length(recent_joins) + " recent joins"
+            Return "🛡️ **RAID ALERT**: Unusual join activity detected. Moderators have been notified."
+    
+    Return null
+
+Call listen_for_message with "contains \"joined\"", check_raid
+
+# Link/invite protection
+Define check_links with message:
+    Let content be get_message_content(message)
+    Let username be get_user_name(message)
+    
+    # Block Discord invites
+    If contains(content, "discord.gg/") or contains(content, "discord.com/invite/") then:
+        Say "🔗 INVITE LINK BLOCKED: " + username
+        Return "🚫 " + username + ", Discord invite links are not allowed!"
+    
+    # Block suspicious links
+    If contains(content, "http://") or contains(content, "https://") then:
+        If contains(content, "bit.ly") or contains(content, "tinyurl") then:
+            Say "🔗 SUSPICIOUS LINK BLOCKED: " + username
+            Return "⚠️ " + username + ", shortened links are not allowed for security."
+    
+    Return null
+
+Call listen_for_message with "all", check_links
+
+# =============================================================================
+# 5. MODERATION UTILITIES
+# =============================================================================
+
+# Clean/purge messages command
+Define clean_messages with ctx, amount:
+    If amount equals null then:
+        Let amount be "10"
+    
+    Say "🧹 CLEANING " + amount + " messages"
+    Return "🧹 Cleaned " + amount + " messages from this channel."
+
+Call add_discord_command with "clean", "Delete recent messages", clean_messages
+
+# User info command
+Define user_info with ctx, user_mention:
+    Let info be "👤 **User Information for " + user_mention + "**\n"
+    Let info be info + "📅 Account Created: Unknown\n"
+    Let info be info + "📈 Server Join Date: Unknown\n"
+    Let info be info + "🎭 Roles: @Member\n"
+    
+    # Add warning info
+    If contains(user_warnings, user_mention) then:
+        Let warnings be user_warnings[user_mention]
+        Let info be info + "⚠️ Warnings: " + warnings + "\n"
+    Else:
+        Let info be info + "✅ Warnings: 0\n"
+    
+    Let info be info + "📊 Status: Active"
+    Return info
+
+Call add_discord_command with "userinfo", "Get detailed user information", user_info
+
+# Server stats command
+Define server_stats with ctx:
+    Let stats be "📊 **Server Moderation Statistics**\n"
+    Let stats be stats + "👥 Total Members: Unknown\n"
+    Let stats be stats + "🤖 Bots: Unknown\n"
+    Let stats be stats + "📝 Channels: Unknown\n"
+    Let stats be stats + "🎭 Roles: Unknown\n"
+    
+    # Add moderation stats
+    Let total_warnings be 0
+    For user, count in user_warnings:
+        Let total_warnings be total_warnings + count
+    
+    Let stats be stats + "⚠️ Total Warnings Issued: " + total_warnings + "\n"
+    Let stats be stats + "🛡️ Bot Status: Active"
+    
+    Return stats
+
+Call add_discord_command with "serverstats", "Show server statistics", server_stats
+
+# =============================================================================
+# 6. HELP SYSTEM
+# =============================================================================
+
+Define mod_help with ctx:
+    Let help_text be "🛡️ **Moderation Bot Commands**\n\n"
+    Let help_text be help_text + "**User Management:**\n"
+    Let help_text be help_text + "• `!kick @user [reason]` - Kick a user\n"
+    Let help_text be help_text + "• `!ban @user [reason]` - Ban a user\n"
+    Let help_text be help_text + "• `!mute @user [duration]` - Mute a user\n"
+    Let help_text be help_text + "• `!warn @user [reason]` - Warn a user\n\n"
+    
+    Let help_text be help_text + "**Channel Management:**\n"
+    Let help_text be help_text + "• `!clean [amount]` - Delete messages\n\n"
+    
+    Let help_text be help_text + "**Information:**\n"
+    Let help_text be help_text + "• `!userinfo @user` - User details\n"
+    Let help_text be help_text + "• `!serverstats` - Server statistics\n\n"
+    
+    Let help_text be help_text + "**Auto-Moderation:**\n"
+    Let help_text be help_text + "✅ Bad word filtering\n"
+    Let help_text be help_text + "✅ Spam detection\n"
+    Let help_text be help_text + "✅ Link protection\n"
+    Let help_text be help_text + "✅ Raid detection"
+    
+    Return help_text
+
+Call add_discord_command with "modhelp", "Show moderation commands", mod_help
+
+# =============================================================================
+# START THE MODERATION BOT
+# =============================================================================
+
+Say "🚀 Starting moderation bot with full protection suite..."
+Say "📋 Features enabled:"
+Say "  ✅ Automatic word filtering (3 severity levels)"
+Say "  ✅ Spam detection with rate limiting"
+Say "  ✅ Link and invite protection"
+Say "  ✅ Raid detection and alerts"
+Say "  ✅ Full moderation command suite"
+Say "  ✅ Warning system with auto-escalation"
+Say "  ✅ User and server statistics"
+
+Call start_discord_bot

@@ -3,7 +3,7 @@ Parser for the Convo programming language
 Converts tokens into an Abstract Syntax Tree (AST)
 """
 
-from typing import List, Optional
+from typing import List, Optional, Union
 from .lexer import Token, TokenType, Lexer
 from .ast_nodes import *
 
@@ -18,9 +18,6 @@ class Parser:
             token_info = f"Type: {self.current_token.type}, Value: {self.current_token.value}"
             raise SyntaxError(f"Line {self.current_token.line}, Column {self.current_token.column}: {message} | Token: {token_info}")
         else:
-            print("DEBUG: Token stream:")
-            for t in self.tokens:
-                print(f"  {t}")
             raise SyntaxError(f"Unexpected end of input: {message}")
     
     def advance(self):
@@ -28,8 +25,13 @@ class Parser:
         if self.pos < len(self.tokens) - 1:
             self.pos += 1
             self.current_token = self.tokens[self.pos]
-        else:
-            self.current_token = None
+    
+    def skip_whitespace_in_collections(self):
+        """Skip newlines and indentation tokens when parsing collections"""
+        while (self.current_token and 
+               self.current_token.type in (TokenType.NEWLINE, TokenType.INDENT, TokenType.DEDENT) and
+               self.pos < len(self.tokens) - 1):
+            self.advance()
     
     def peek(self, offset: int = 1) -> Optional[Token]:
         """Look ahead at the next token without advancing"""
@@ -62,9 +64,6 @@ class Parser:
     
     def parse(self) -> Program:
         """Parse the tokens into a Program AST node"""
-        print("DEBUG: Token stream before parsing:")
-        for t in self.tokens:
-            print(f"  {t}")
         statements = []
         self.skip_newlines()
         # Skip leading INDENT tokens
@@ -112,9 +111,26 @@ class Parser:
             return self.parse_continue_statement()
         elif self.match(TokenType.IMPORT):
             return self.parse_import_statement()
+        elif self.match(TokenType.FROM):
+            return self.parse_import_statement()  # Will handle both import types
         elif self.match(TokenType.NEWLINE):
             self.advance()
             return None
+        elif self.match(TokenType.IDENTIFIER):
+            # Could be a method call or other expression statement
+            # Look ahead to see if this is a method call
+            next_token = self.peek()
+            if next_token and next_token.type == TokenType.DOT:
+                # This might be a method call, try to parse it as an expression statement
+                expr = self.parse_expression()
+                if isinstance(expr, MethodCall):
+                    # Create a wrapper function call for the method call
+                    return CallStatement(FunctionCall("_method_call", [expr]))
+                else:
+                    self.error("Expression statements are not yet supported")
+            else:
+                token_val = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
+                self.error(f"Unexpected token: {token_val}")
         else:
             token_val = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
             self.error(f"Unexpected token: {token_val}")
@@ -278,24 +294,94 @@ class Parser:
         
         return WhileStatement(condition, body)
     
-    def parse_for_statement(self) -> ForStatement:
-        """Parse: For each <variable> in <collection> do: <body>"""
+    def parse_for_statement(self) -> Statement:
+        """Parse enhanced for-loop statements with different iteration patterns"""
         self.consume(TokenType.FOR)
-        self.consume(TokenType.EACH)
-        variable = self.consume(TokenType.IDENTIFIER).value
-        self.consume(TokenType.IN)
-        collection = self.parse_expression()
-        self.consume(TokenType.DO)
-        self.consume(TokenType.COLON)
-        self.skip_newlines()
         
-        # Parse body
-        if self.match(TokenType.INDENT):
-            body = self.parse_block()
+        # Check for different patterns:
+        # 1. For each item in collection do:
+        # 2. For item at index in collection do:
+        # 3. For key, value in collection do: (unpacking)
+        
+        if self.match(TokenType.EACH):
+            # Standard for-each loop: For each item in collection do:
+            self.advance()  # consume 'each'
+            variable = self.consume(TokenType.IDENTIFIER).value
+            self.consume(TokenType.IN)
+            collection = self.parse_expression()
+            self.consume(TokenType.DO)
+            self.consume(TokenType.COLON)
+            self.skip_newlines()
+            
+            # Parse body
+            if self.match(TokenType.INDENT):
+                body = self.parse_block()
+            else:
+                self.error("Expected indented block after 'do:'")
+            
+            return ForStatement(variable, collection, body)
+            
         else:
-            self.error("Expected indented block after 'do:'")
-        
-        return ForStatement(variable, collection, body)
+            # Check for patterns that start with an identifier
+            first_var = self.consume(TokenType.IDENTIFIER).value
+            
+            if self.match(TokenType.AT):
+                # Indexed iteration: For item at index in collection do:
+                self.advance()  # consume 'at'
+                index_var = self.consume(TokenType.IDENTIFIER).value
+                self.consume(TokenType.IN)
+                collection = self.parse_expression()
+                self.consume(TokenType.DO)
+                self.consume(TokenType.COLON)
+                self.skip_newlines()
+                
+                # Parse body
+                if self.match(TokenType.INDENT):
+                    body = self.parse_block()
+                else:
+                    self.error("Expected indented block after 'do:'")
+                
+                return ForIndexStatement(first_var, index_var, collection, body)
+                
+            elif self.match(TokenType.COMMA):
+                # Unpacking iteration: For key, value in collection do:
+                variables = [first_var]
+                while self.match(TokenType.COMMA):
+                    self.advance()  # consume comma
+                    variables.append(self.consume(TokenType.IDENTIFIER).value)
+                
+                self.consume(TokenType.IN)
+                collection = self.parse_expression()
+                self.consume(TokenType.DO)
+                self.consume(TokenType.COLON)
+                self.skip_newlines()
+                
+                # Parse body
+                if self.match(TokenType.INDENT):
+                    body = self.parse_block()
+                else:
+                    self.error("Expected indented block after 'do:'")
+                
+                return ForUnpackStatement(variables, collection, body)
+                
+            elif self.match(TokenType.IN):
+                # Simple iteration: For item in collection do:
+                self.advance()  # consume 'in'
+                collection = self.parse_expression()
+                self.consume(TokenType.DO)
+                self.consume(TokenType.COLON)
+                self.skip_newlines()
+                
+                # Parse body
+                if self.match(TokenType.INDENT):
+                    body = self.parse_block()
+                else:
+                    self.error("Expected indented block after 'do:'")
+                
+                return ForStatement(first_var, collection, body)
+                
+            else:
+                self.error("Expected 'at', ',', or 'in' after variable in for statement")
     
     def parse_try_statement(self) -> TryStatement:
         """Parse: Try: <body> Catch <variable>: <catch_body>"""
@@ -346,11 +432,58 @@ class Parser:
         self.consume(TokenType.CONTINUE)
         return ContinueStatement()
     
-    def parse_import_statement(self) -> ImportStatement:
-        """Parse: Import <module_name>"""
+    def parse_import_statement(self) -> Statement:
+        """Parse: Import <module_name> [as <alias>] | From <module> import <items>"""
+        
+        # Handle "from module import" statements
+        if self.match(TokenType.FROM):
+            return self.parse_from_import_statement()
+        
+        # Handle regular "import module" statements
         self.consume(TokenType.IMPORT)
         module_name = self.consume(TokenType.IDENTIFIER).value
-        return ImportStatement(module_name)
+        
+        # Check for optional "as alias"
+        alias = None
+        if self.match(TokenType.AS):
+            self.advance()
+            alias = self.consume(TokenType.IDENTIFIER).value
+        
+        return ImportStatement(module_name, alias)
+    
+    def parse_from_import_statement(self) -> FromImportStatement:
+        """Parse: From <module> import <item1>, <item2> [as <alias1>, <alias2>]"""
+        self.consume(TokenType.FROM)
+        module_name = self.consume(TokenType.IDENTIFIER).value
+        self.consume(TokenType.IMPORT)
+        
+        # Parse imported items
+        imports = []
+        aliases = []
+        
+        # First import item
+        imports.append(self.consume(TokenType.IDENTIFIER).value)
+        
+        # Check for alias
+        if self.match(TokenType.AS):
+            self.advance()
+            aliases.append(self.consume(TokenType.IDENTIFIER).value)
+        else:
+            aliases.append(None)
+        
+        # Additional import items
+        while self.match(TokenType.COMMA):
+            self.advance()
+            imports.append(self.consume(TokenType.IDENTIFIER).value)
+            
+            # Check for alias
+            if self.match(TokenType.AS):
+                self.advance()
+                aliases.append(self.consume(TokenType.IDENTIFIER).value)
+            else:
+                aliases.append(None)
+        
+        return FromImportStatement(module_name, imports, aliases)
     
     def parse_block(self) -> List[Statement]:
         """Parse an indented block of statements"""
@@ -446,10 +579,10 @@ class Parser:
         return expr
     
     def parse_multiplicative_expression(self) -> Expression:
-        """Parse multiplication and division"""
+        """Parse multiplication, division, and modulo"""
         expr = self.parse_unary_expression()
         
-        while self.match(TokenType.MULTIPLY, TokenType.DIVIDE):
+        while self.match(TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MODULO):
             operator = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
             if operator is None:
                 self.error("Expected operator in expression")
@@ -473,13 +606,25 @@ class Parser:
     
     def parse_primary_expression(self) -> Expression:
         """Parse primary expressions (literals, identifiers, function calls, parentheses, lists, dicts, etc.)"""
-        # Handle string and number literals
-        if self.match(TokenType.STRING, TokenType.NUMBER):
-            value = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
-            if value is None:
-                self.error("Expected value in expression")
+        # Handle string literals
+        if self.match(TokenType.STRING):
+            value = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else ""
             self.advance()
-            return Literal(value)
+            # Remove quotes from string literal
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+            elif value.startswith("'") and value.endswith("'"):
+                value = value[1:-1]
+            return StringLiteral(value)
+        
+        # Handle number literals (integer and float)
+        if self.match(TokenType.NUMBER):
+            value = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else "0"
+            self.advance()
+            if '.' in str(value):
+                return NumberLiteral(float(value))
+            else:
+                return NumberLiteral(int(value))
         
         # Handle list literals [1, 2, 3]
         if self.match(TokenType.LBRACKET):
@@ -495,6 +640,18 @@ class Parser:
         
         # Handle identifiers, property access, method calls
         if self.match(TokenType.IDENTIFIER):
+            # Check for special literals first
+            if self.current_token and hasattr(self.current_token, 'value'):
+                if self.current_token.value == "true":
+                    self.advance()
+                    return BooleanLiteral(True)
+                elif self.current_token.value == "false":
+                    self.advance()
+                    return BooleanLiteral(False)
+                elif self.current_token.value in ["null", "none"]:
+                    self.advance()
+                    return NullLiteral()
+            
             expr = self.parse_identifier_expression()
             
             # Handle chained property access and method calls
@@ -519,8 +676,17 @@ class Parser:
                     else:
                         expr = MethodCall(str(expr), property_name, arguments)
                 else:
-                    # Property access
-                    expr = PropertyAccess(expr, property_name)
+                    # Check if this is a built-in collection method that should be treated as a method call
+                    builtin_methods = ['length', 'keys', 'values', 'upper', 'lower']
+                    if property_name in builtin_methods:
+                        # Treat as method call with no arguments
+                        if isinstance(expr, Identifier):
+                            expr = MethodCall(expr.name, property_name, [])
+                        else:
+                            expr = MethodCall(str(expr), property_name, [])
+                    else:
+                        # Property access
+                        expr = PropertyAccess(expr, property_name)
             
             # Handle array/dictionary indexing
             while self.match(TokenType.LBRACKET):
@@ -538,36 +704,100 @@ class Parser:
             self.consume(TokenType.RPAREN, "Expected ')' after expression")
             return expr
         
-        # Handle special literals
-        if self.match(TokenType.IDENTIFIER):
-            if self.current_token and hasattr(self.current_token, 'value') and self.current_token.value in ["null", "true", "false"]:
-                value = self.current_token.value
-                self.advance()
-                return Literal(value)
-        
         token_val = self.current_token.value if self.current_token and hasattr(self.current_token, 'value') else None
         self.error(f"Unexpected token in expression: {token_val}")
     
-    def parse_list_literal(self) -> ListLiteral:
-        """Parse [element1, element2, ...]"""
+    def parse_list_literal(self) -> Union[ListLiteral, ListComprehension]:
+        """Parse [element1, element2, ...] or [expr for var in iterable if condition]"""
         self.consume(TokenType.LBRACKET)
-        elements = []
         
-        if not self.match(TokenType.RBRACKET):
+        # Skip any whitespace after opening bracket
+        self.skip_whitespace_in_collections()
+        
+        if self.match(TokenType.RBRACKET):
+            # Empty list
+            self.advance()
+            return ListLiteral([])
+        
+        # Parse the first expression
+        first_expr = self.parse_expression()
+        
+        # Skip whitespace after first expression
+        self.skip_whitespace_in_collections()
+        
+        # Check if this is a list comprehension (has "for" keyword)
+        if self.match(TokenType.FOR):
+            return self.parse_list_comprehension_from_expr(first_expr)
+        
+        # Regular list literal
+        elements = [first_expr]
+        
+        while self.match(TokenType.COMMA):
+            self.advance()
+            
+            # Skip whitespace after comma
+            self.skip_whitespace_in_collections()
+            
+            if self.match(TokenType.RBRACKET):  # Allow trailing comma
+                break
+                
             elements.append(self.parse_expression())
-            while self.match(TokenType.COMMA):
-                self.advance()
-                if self.match(TokenType.RBRACKET):  # Allow trailing comma
-                    break
-                elements.append(self.parse_expression())
+            
+            # Skip whitespace after each element
+            self.skip_whitespace_in_collections()
         
+        # Skip any whitespace before closing bracket
+        self.skip_whitespace_in_collections()
         self.consume(TokenType.RBRACKET)
         return ListLiteral(elements)
     
+    def parse_list_comprehension_from_expr(self, transform_expr: Expression) -> ListComprehension:
+        """Parse list comprehension from the transform expression: for var in iterable if condition"""
+        # Consume the "for" keyword
+        self.consume(TokenType.FOR)
+        
+        # Expect "each" keyword
+        if self.match(TokenType.EACH):
+            self.advance()
+        
+        # Get the loop variable
+        if not self.match(TokenType.IDENTIFIER):
+            line = self.current_token.line if self.current_token else 0
+            column = self.current_token.column if self.current_token else 0
+            raise SyntaxError(f"Line {line}, Column {column}: Expected variable name in list comprehension")
+        
+        variable = self.current_token.value if self.current_token else ""
+        self.advance()
+        
+        # Expect "in" keyword
+        if not self.match(TokenType.IN):
+            line = self.current_token.line if self.current_token else 0
+            column = self.current_token.column if self.current_token else 0
+            raise SyntaxError(f"Line {line}, Column {column}: Expected 'in' in list comprehension")
+        self.advance()
+        
+        # Parse the iterable expression
+        iterable = self.parse_expression()
+        
+        # Check for optional "if" condition
+        condition = None
+        if self.match(TokenType.IF):
+            self.advance()
+            condition = self.parse_expression()
+        
+        # Consume closing bracket
+        self.skip_whitespace_in_collections()
+        self.consume(TokenType.RBRACKET)
+        
+        return ListComprehension(transform_expr, variable, iterable, condition)
+    
     def parse_dictionary_literal(self) -> DictionaryLiteral:
-        """Parse {"key": value, "key2": value2}"""
+        """Parse {"key": value, "key2": value2} with support for multi-line format"""
         self.consume(TokenType.LBRACE)
         pairs = []
+        
+        # Skip any whitespace after opening brace
+        self.skip_whitespace_in_collections()
         
         if not self.match(TokenType.RBRACE):
             # Parse first key-value pair
@@ -578,13 +808,20 @@ class Parser:
             
             while self.match(TokenType.COMMA):
                 self.advance()
+                
+                # Skip whitespace after comma
+                self.skip_whitespace_in_collections()
+                
                 if self.match(TokenType.RBRACE):  # Allow trailing comma
                     break
+                    
                 key = self.parse_expression()
                 self.consume(TokenType.COLON)
                 value = self.parse_expression()
                 pairs.append((key, value))
         
+        # Skip any whitespace before closing brace
+        self.skip_whitespace_in_collections()
         self.consume(TokenType.RBRACE)
         return DictionaryLiteral(pairs)
     

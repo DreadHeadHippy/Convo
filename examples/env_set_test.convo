@@ -1,8 +1,0 @@
-Say "Testing set_env function..."
-Call set_env with "CONVO_TEST" and "Hello World"
-Say "Set_env completed"
-
-Let retrieved be get_env("CONVO_TEST")
-Say "Retrieved value: " + retrieved
-
-Say "Test complete!"

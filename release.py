@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """
-Release script for Convo Programming Language
-Creates a new release with proper versioning and changelog
+Release script for Convo Programming Language v0.0.1
+Initial production release with core features
 """
 
 import subprocess
 import sys
 import os
 from datetime import datetime
+
+# Current version for initial release
+CURRENT_VERSION = "v0.0.1"
+RELEASE_NAME = "Initial Release - Core Programming Language"
 
 def run_command(cmd):
     """Run a shell command and return output"""
@@ -27,7 +31,7 @@ def get_current_version():
 
 def create_release(version, message):
     """Create a new release"""
-    print(f"Creating release {version}...")
+    print(f"Creating production release {version}...")
     
     # Run tests first
     print("Running tests...")
@@ -48,7 +52,7 @@ def create_release(version, message):
 def main():
     if len(sys.argv) != 3:
         print("Usage: python release.py <version> <message>")
-        print("Example: python release.py v1.0.0 'Initial stable release'")
+        print("Example: python release.py v0.0.1 'Initial production release'")
         sys.exit(1)
     
     version = sys.argv[1]

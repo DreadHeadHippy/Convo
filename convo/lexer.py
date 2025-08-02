@@ -27,6 +27,7 @@ class TokenType(Enum):
     FOR = auto()          # For each item in list
     EACH = auto()         # For each item in list  
     IN = auto()           # in keyword
+    AT = auto()           # at keyword (for indexed iteration)
     BREAK = auto()        # Break from loop
     CONTINUE = auto()     # Continue loop
     RETURN = auto()       # Return from function
@@ -35,6 +36,9 @@ class TokenType(Enum):
     THROW = auto()        # Throw error
     IMPORT = auto()       # Import module
     FROM = auto()         # From module import
+    AS = auto()           # Import as alias
+    NAMESPACE = auto()    # Namespace keyword
+    MODULE = auto()       # Module keyword
     CREATE = auto()       # Create object/list
     LIST = auto()         # List data type
     DICTIONARY = auto()   # Dictionary data type
@@ -46,6 +50,7 @@ class TokenType(Enum):
     MINUS = auto()        # -
     MULTIPLY = auto()     # *
     DIVIDE = auto()       # /
+    MODULO = auto()       # %
     EQUALS = auto()       # equals, is
     NOT_EQUALS = auto()   # not equals, is not
     GREATER = auto()      # greater than
@@ -211,6 +216,7 @@ class Lexer:
             'for': TokenType.FOR,
             'each': TokenType.EACH,
             'in': TokenType.IN,
+            'at': TokenType.AT,
             'break': TokenType.BREAK,
             'continue': TokenType.CONTINUE,
             'return': TokenType.RETURN,
@@ -219,6 +225,9 @@ class Lexer:
             'throw': TokenType.THROW,
             'import': TokenType.IMPORT,
             'from': TokenType.FROM,
+            'as': TokenType.AS,
+            'namespace': TokenType.NAMESPACE,
+            'module': TokenType.MODULE,
             'create': TokenType.CREATE,
             'list': TokenType.LIST,
             'dictionary': TokenType.DICTIONARY,
@@ -296,6 +305,7 @@ class Lexer:
                 '-': TokenType.MINUS,
                 '*': TokenType.MULTIPLY,
                 '/': TokenType.DIVIDE,
+                '%': TokenType.MODULO,
                 ':': TokenType.COLON,
                 ',': TokenType.COMMA,
                 '(': TokenType.LPAREN,

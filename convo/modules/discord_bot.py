@@ -271,6 +271,16 @@ def get_message_content(message):
     return ""
 
 # Discord functions to be integrated into Convo builtins
+try:
+    from .discord_advanced import ADVANCED_DISCORD_FUNCTIONS
+except ImportError:
+    ADVANCED_DISCORD_FUNCTIONS = {}
+
+try:
+    from .discord_error_handling import DISCORD_ERROR_HANDLING
+except ImportError:
+    DISCORD_ERROR_HANDLING = {}
+
 DISCORD_FUNCTIONS = {
     'create_discord_bot': create_discord_bot,
     'listen_for_message': listen_for_message,
@@ -280,3 +290,9 @@ DISCORD_FUNCTIONS = {
     'get_user_name': get_user_name,
     'get_message_content': get_message_content,
 }
+
+# Add advanced Discord functions
+DISCORD_FUNCTIONS.update(ADVANCED_DISCORD_FUNCTIONS)
+
+# Add error handling utilities
+DISCORD_FUNCTIONS.update(DISCORD_ERROR_HANDLING)

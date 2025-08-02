@@ -1,4 +1,0 @@
-Say "Testing direct function call..."
-Let result be set_env("CONVO_TEST", "Hello World")
-Say "Direct call result: " + to_text(result)
-Say "Test complete!"
