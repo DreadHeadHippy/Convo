@@ -62,7 +62,22 @@ class ConvoDiscordBot:
         
         self.token = token
         self.prefix = prefix
-        self.bot = commands.Bot(command_prefix=prefix, intents=discord.Intents.all())
+        
+        # Create intents more safely - avoid hanging
+        try:
+            intents = discord.Intents.default()
+            intents.message_content = True
+            intents.members = True
+            intents.presences = True
+            
+            self.bot = commands.Bot(command_prefix=prefix, intents=intents)
+        except Exception as e:
+            # Fallback to minimal intents if all fail
+            print(f"Warning: Using minimal intents due to error: {e}")
+            intents = discord.Intents.default()
+            intents.message_content = True
+            self.bot = commands.Bot(command_prefix=prefix, intents=intents)
+        
         self.events: List[ConvoDiscordEvent] = []
         self.commands: List[ConvoDiscordCommand] = []
         self.is_running = False
@@ -306,7 +321,20 @@ discord_module = DiscordModule()
 # Built-in functions for Discord integration
 def create_discord_bot(token: str, prefix: str = "!"):
     """Create a Discord bot with the given token and prefix"""
-    return discord_module.create_bot(token, prefix)
+    if not token or token.strip() == "":
+        raise ValueError("Bot token cannot be empty")
+    
+    if token == "YOUR_BOT_TOKEN_HERE":
+        raise ValueError("Please replace 'YOUR_BOT_TOKEN_HERE' with your actual Discord bot token")
+    
+    try:
+        print(f"Creating Discord bot with prefix '{prefix}'...")
+        bot = discord_module.create_bot(token, prefix)
+        print("Discord bot created successfully!")
+        return bot
+    except Exception as e:
+        print(f"Failed to create Discord bot: {e}")
+        raise RuntimeError(f"Discord bot creation failed: {e}")
 
 def listen_for_message(condition: str, action: Callable):
     """Listen for messages matching condition"""
