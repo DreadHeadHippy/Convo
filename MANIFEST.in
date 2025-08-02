@@ -1,0 +1,18 @@
+include README.md
+include LICENSE
+include SECURITY.md
+include CONTRIBUTING.md
+include requirements.txt
+include requirements-discord.txt
+recursive-include examples *.convo
+recursive-include examples *.md
+recursive-include tests *.py
+recursive-include tests *.convo
+recursive-include convo *.py
+recursive-include convo/modules *.py
+recursive-include convo/modules/discord *.py
+exclude *.pyc
+exclude **/__pycache__/*
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude *.pyo

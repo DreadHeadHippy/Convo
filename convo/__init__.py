@@ -4,13 +4,21 @@ Convo Programming Language
 A natural language-like programming language with conversational syntax.
 """
 
-__version__ = "1.0.0"
-__author__ = "Convo Language Team"
+__version__ = "0.0.1"
+__author__ = "DreadHeadHippy"
 
-from .lexer import Lexer, Token, TokenType
-from .parser import Parser, parse_convo
-from .interpreter import Interpreter, ConvoRuntimeError
-from .ast_nodes import *
+# Support both relative and absolute imports for better compatibility
+try:
+    from .lexer import Lexer, Token, TokenType
+    from .parser import Parser, parse_convo
+    from .interpreter import Interpreter, ConvoRuntimeError
+    from .ast_nodes import *
+except ImportError:
+    # Fallback to absolute imports if relative imports fail
+    from convo.lexer import Lexer, Token, TokenType
+    from convo.parser import Parser, parse_convo
+    from convo.interpreter import Interpreter, ConvoRuntimeError
+    from convo.ast_nodes import *
 
 __all__ = [
     'Lexer', 'Token', 'TokenType',

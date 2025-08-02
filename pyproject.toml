@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "convo-lang"
+version = "0.0.1"
+authors = [
+    {name = "DreadHeadHippy", email = "155098676+DreadHeadHippy@users.noreply.github.com"},
+]
+description = "A natural programming language with conversational syntax"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Interpreters",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Education",
+]
+keywords = ["programming-language", "interpreter", "natural-language", "conversational", "discord-bots"]
+dependencies = []
+
+[project.optional-dependencies]
+discord = ["discord.py>=2.0.0"]
+dev = ["pytest>=8.0.0", "pytest-cov"]
+
+[project.urls]
+Homepage = "https://github.com/DreadHeadHippy/Convo"
+Repository = "https://github.com/DreadHeadHippy/Convo"
+Issues = "https://github.com/DreadHeadHippy/Convo/issues"
+Documentation = "https://github.com/DreadHeadHippy/Convo#readme"
+
+[project.scripts]
+convo = "convo.__main__:main"
+
+[tool.setuptools]
+packages = ["convo", "convo.modules", "convo.modules.discord"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+convo = ["*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"

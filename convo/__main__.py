@@ -146,7 +146,7 @@ Examples:
     parser.add_argument(
         '--version',
         action='version',
-        version='Convo 1.0.0'
+        version='Convo 0.0.1'
     )
     
     args = parser.parse_args()
